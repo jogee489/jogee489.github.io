@@ -1,77 +1,65 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
+import About from '../components/About.astro';
+import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Hero from '../components/Hero.astro';
+import Nav from '../components/Nav.astro';
+import Projects from '../components/Projects.astro';
+import Skills from '../components/Skills.astro';
+import Terminal from '../components/Terminal';
+import '../styles/portfolio.css';
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				display: flex;
-				flex-direction: column;
-				gap: 2rem;
-			}
-			.hero {
-				padding: 3rem 0;
-			}
-			.hero h1 {
-				margin: 0 0 0.25rem 0;
-				font-size: 2.5rem;
-			}
-			.hero h2 {
-				margin: 0 0 1rem 0;
-				font-size: 1.25rem;
-				font-weight: normal;
-				color: rgb(var(--gray));
-			}
-			.hero p {
-				font-size: 1.1rem;
-				color: rgb(var(--gray-dark));
-				max-width: 600px;
-				margin: 0 0 2rem 0;
-			}
-			.cta-links {
-				display: flex;
-				gap: 1rem;
-				flex-wrap: wrap;
-			}
-			.cta-links a {
-				padding: 0.6rem 1.2rem;
-				border: 2px solid rgb(var(--accent));
-				border-radius: 6px;
-				text-decoration: none;
-				color: rgb(var(--accent));
-				font-weight: 600;
-				transition: 0.2s ease;
-			}
-			.cta-links a:hover {
-				background: rgb(var(--accent));
-				color: white;
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section class="hero">
-				<h1>JJ Dorko</h1>
-				<h2>Senior Software Engineer</h2>
-				<p>
-					10+ years experience in backend and cross-platform development. Teaching English and
-					building apps.
-				</p>
-				<div class="cta-links">
-					<a href="/projects">View Projects</a>
-					<a href="/about">About Me</a>
-					<a href="https://github.com/jogee489" target="_blank">GitHub</a>
-					<a href="https://www.linkedin.com/in/joseph-dorko-234721a9/" target="_blank">LinkedIn</a>
-				</div>
-			</section>
-		</main>
-		<Footer />
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <title>JJ Dorko — Software Engineer</title>
+    <meta name="description" content="Backend engineer with 10+ years building reliable software. Available for freelance." />
+    <meta property="og:title" content="JJ Dorko — Software Engineer" />
+    <meta property="og:description" content="Backend engineer with 10+ years building reliable software. Available for freelance." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+  </head>
+  <body>
+    <Nav />
+    <main>
+      <Hero />
+      <About />
+      <Skills />
+      <Projects />
+      <Contact />
+    </main>
+    <Footer />
+    <Terminal client:load />
+  </body>
 </html>
+
+<script>
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const io = new IntersectionObserver(
+      entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).setAttribute('data-revealed', '1');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('[data-reveal]').forEach(el =>
+      (el as HTMLElement).setAttribute('data-revealed', '1')
+    );
+  }
+</script>

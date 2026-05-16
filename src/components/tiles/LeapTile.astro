@@ -1,0 +1,29 @@
+---
+import TileBase from './TileBase.astro';
+interface Props { screenshot?: string; }
+const { screenshot } = Astro.props;
+const bars = [1, 0.85, 0.7, 0.55, 0.9, 0.7, 0.45];
+---
+
+<TileBase
+  gradient="linear-gradient(135deg, oklch(0.32 0.12 25) 0%, oklch(0.45 0.18 18) 55%, oklch(0.6 0.16 35) 100%)"
+  screenshot={screenshot}
+>
+  <!-- Wordmark -->
+  <div style="position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:flex-start;padding:20px 22px;pointer-events:none;">
+    <span style="font-family:var(--serif);font-style:italic;color:rgba(255,255,255,0.92);font-size:clamp(28px,4.4vw,56px);line-height:0.95;letter-spacing:-0.5px;text-shadow:0 2px 14px rgba(0,0,0,0.25);">Rails<br />/ scraper</span>
+  </div>
+  <!-- Browser frame -->
+  <div style="position:absolute;left:8%;right:8%;bottom:8%;top:18%;transform:rotate(-2deg);border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.18);backdrop-filter:blur(6px);box-shadow:0 18px 36px rgba(0,0,0,0.22);overflow:hidden;">
+    <div style="display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.15);background:rgba(0,0,0,0.18);">
+      <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.45);display:inline-block;"></span>
+      <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.3);display:inline-block;"></span>
+      <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);display:inline-block;"></span>
+    </div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:8px;">
+      {bars.map(w => (
+        <div style={`height:8px;width:${w * 100}%;background:rgba(255,255,255,0.18);border-radius:3px;`}></div>
+      ))}
+    </div>
+  </div>
+</TileBase>

@@ -1,0 +1,20 @@
+---
+import { SKILL_GROUPS } from '../data/skills';
+---
+
+<section id="skills" class="section section-skills">
+  <h2 class="section-eyebrow" data-reveal>Stack</h2>
+  <div class="skills-grid" data-reveal style="--reveal-delay:80ms">
+    {SKILL_GROUPS.map(g => (
+      <div class="skill-group">
+        <div class="skill-group-head">
+          <span class="skill-group-n">{g.n}</span>
+          <span class="skill-group-label">{g.label}</span>
+        </div>
+        <div class="skill-chips">
+          {g.items.map(s => <span class="chip">{s}</span>)}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

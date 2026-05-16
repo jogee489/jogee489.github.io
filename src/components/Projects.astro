@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="work" class="section section-work">
+  <div class="work-head">
+    <h2 class="section-eyebrow" data-reveal>Selected work</h2>
+    <span class="work-head-count" data-reveal style="--reveal-delay:60ms">Six projects</span>
+  </div>
+  <div class="work-grid">
+    {projects.map((p, i) => (
+      <ProjectCard
+        n={String(p.data.order).padStart(2, '0')}
+        name={p.data.name}
+        role={p.data.role}
+        stack={p.data.stack}
+        blurb={p.data.blurb}
+        repo={p.data.repo}
+        tile={p.data.tile}
+        image={p.data.image}
+        delay={i * 60}
+      />
+    ))}
+  </div>
+</section>

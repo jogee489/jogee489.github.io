@@ -1,0 +1,30 @@
+---
+---
+
+<nav class="nav" id="site-nav">
+  <a href="#top" class="nav-mark">
+    <span class="nav-mark-glyph">JJ</span>
+    <span class="nav-mark-text">Dorko</span>
+  </a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+    <button class="nav-term" id="nav-term-btn" title="Open terminal (~)">
+      <span class="nav-term-dot"></span>
+      <span>~ terminal</span>
+    </button>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('site-nav');
+  window.addEventListener('scroll', () => {
+    nav?.classList.toggle('nav-scrolled', window.scrollY > 24);
+  }, { passive: true });
+
+  document.getElementById('nav-term-btn')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('portfolio:open-terminal'));
+  });
+</script>
