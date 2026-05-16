@@ -1,0 +1,52 @@
+---
+import ContactForm from './ContactForm';
+---
+
+<section id="contact" class="section section-contact">
+  <h2 class="section-eyebrow" data-reveal>Contact</h2>
+  <div class="contact-grid">
+    <div class="contact-left">
+      <h3 class="contact-title" data-reveal style="--reveal-delay:60ms">
+        Let's build<br />something <em>useful</em>.
+      </h3>
+      <p class="contact-lead" data-reveal style="--reveal-delay:120ms">
+        Looking for a senior backend hand, a freelance pair of eyes on
+        your Rails stack, or just want to chat? Drop a note — I read
+        everything that lands here.
+      </p>
+      <ul class="contact-links" data-reveal style="--reveal-delay:180ms">
+        <li>
+          <a href="mailto:jj@dorko.dev">
+            <span class="contact-link-k">Email</span>
+            <span class="contact-link-v">jj@dorko.dev</span>
+            <span class="contact-link-arr">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/jogee489" target="_blank" rel="noreferrer">
+            <span class="contact-link-k">GitHub</span>
+            <span class="contact-link-v">github.com/jogee489</span>
+            <span class="contact-link-arr">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://linkedin.com/in/jjdorko" target="_blank" rel="noreferrer">
+            <span class="contact-link-k">LinkedIn</span>
+            <span class="contact-link-v">linkedin.com/in/jjdorko</span>
+            <span class="contact-link-arr">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="/resume.pdf">
+            <span class="contact-link-k">Résumé</span>
+            <span class="contact-link-v">resume.pdf</span>
+            <span class="contact-link-arr">↗</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="contact-right" data-reveal style="--reveal-delay:120ms">
+      <ContactForm client:load />
+    </div>
+  </div>
+</section>

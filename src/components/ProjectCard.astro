@@ -1,0 +1,48 @@
+---
+import HeartopiaTile from './tiles/HeartopiaTile.astro';
+import LaserDefenderTile from './tiles/LaserDefenderTile.astro';
+import LeapTile from './tiles/LeapTile.astro';
+import LunchRouletteTile from './tiles/LunchRouletteTile.astro';
+import MarvelRandomizerTile from './tiles/MarvelRandomizerTile.astro';
+import WeatherPetTile from './tiles/WeatherPetTile.astro';
+
+interface Props {
+  n: string;
+  name: string;
+  role: string;
+  stack: string[];
+  blurb: string;
+  repo: string;
+  tile: string;
+  image?: string;
+  delay?: number;
+}
+
+const { n, name, role, stack, blurb, repo, tile, image, delay = 0 } = Astro.props;
+---
+
+<article class="card" data-reveal style={`--reveal-delay:${delay}ms`}>
+  <a href={`https://${repo}`} target="_blank" rel="noreferrer" class="card-link">
+    <div class="card-tile">
+      {tile === 'heartopia'              && <HeartopiaTile screenshot={image} />}
+      {tile === 'leap'                   && <LeapTile screenshot={image} />}
+      {tile === 'weather-pet'            && <WeatherPetTile screenshot={image} />}
+      {tile === 'lunchroulette'          && <LunchRouletteTile screenshot={image} />}
+      {tile === 'laserdefender'          && <LaserDefenderTile screenshot={image} />}
+      {tile === 'marvel-rivals-randomizer' && <MarvelRandomizerTile screenshot={image} />}
+    </div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="card-n">{n}</span>
+        <span class="card-role">{role}</span>
+      </div>
+      <h3 class="card-name">
+        {name}<span class="card-arrow">↗</span>
+      </h3>
+      <p class="card-blurb">{blurb}</p>
+      <div class="card-stack">
+        {stack.map(s => <span class="chip chip-sm">{s}</span>)}
+      </div>
+    </div>
+  </a>
+</article>

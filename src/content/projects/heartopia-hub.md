@@ -1,18 +1,11 @@
 ---
-title: 'Heartopia Hub'
-description: 'A cross-platform mobile application focused on health and wellness tracking.'
-pubDate: 'May 15 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+order: 1
+name: "Heartopia Hub"
+role: "Founding engineer"
+stack: ["React", "Node.js", "Capacitor", "iOS", "Android"]
+blurb: "Cross-platform companion app for the Heartopia tabletop game — players track campaigns, parties, and unlocks from one codebase that ships to iOS and Android."
+repo: "github.com/jogee489/heartopia-hub"
+tile: "heartopia"
 ---
 
-Heartopia Hub is a cross-platform mobile application built to help users track and improve their health and wellness journey.
-
-## Overview
-
-Placeholder content for Heartopia Hub. More details coming soon.
-
-## Tech Stack
-
-- Cross-platform mobile development
-- Backend API integration
-- Real-time data sync
+Heartopia Hub is a cross-platform companion app for the Heartopia tabletop game.

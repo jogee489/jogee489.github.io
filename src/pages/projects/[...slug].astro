@@ -1,20 +1,50 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_DESCRIPTION } from '../../consts';
 
 export async function getStaticPaths() {
-	const projects = await getCollection('projects');
-	return projects.map((project) => ({
-		params: { slug: project.id },
-		props: project,
-	}));
+  const projects = await getCollection('projects');
+  return projects.map(project => ({
+    params: { slug: project.id },
+    props: project,
+  }));
 }
-type Props = CollectionEntry<'projects'>;
 
+type Props = CollectionEntry<'projects'>;
 const project = Astro.props;
-const { Content } = await render(project);
 ---
 
-<BlogPost {...project.data}>
-	<Content />
-</BlogPost>
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={project.data.name} description={project.data.blurb ?? SITE_DESCRIPTION} />
+    <style>
+      main { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 3em 1em; }
+      .stack { display: flex; flex-wrap: wrap; gap: 0.5em; list-style: none; margin: 1em 0; padding: 0; }
+      .stack li { padding: 3px 10px; border: 1px solid rgb(var(--gray-light)); border-radius: 999px; font-size: 0.85em; }
+      .repo a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <article>
+        <h1>{project.data.name}</h1>
+        <p style="color: rgb(var(--gray)); margin: 0 0 1em;">{project.data.role}</p>
+        <ul class="stack">
+          {project.data.stack.map(s => <li>{s}</li>)}
+        </ul>
+        <p>{project.data.blurb}</p>
+        <p class="repo">
+          <a href={`https://${project.data.repo}`} target="_blank" rel="noreferrer">
+            {project.data.repo} ↗
+          </a>
+        </p>
+      </article>
+    </main>
+    <Footer />
+  </body>
+</html>
