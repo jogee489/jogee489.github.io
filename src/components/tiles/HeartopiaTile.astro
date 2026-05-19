@@ -6,6 +6,7 @@ const { screenshot } = Astro.props;
 
 <TileBase
   gradient="linear-gradient(135deg, oklch(0.42 0.18 305) 0%, oklch(0.55 0.16 350) 60%, oklch(0.65 0.12 35) 100%)"
+  hidePending={!!screenshot}
 >
   <!-- Wordmark -->
   <div style="position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:flex-start;padding:20px 22px;pointer-events:none;">
