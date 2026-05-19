@@ -113,6 +113,7 @@ export default function Terminal() {
         break;
       case 'resume':
         push(['→ opening résumé in Google Docs …']);
+        window.open('https://docs.google.com/document/d/1lEfCjaSvtYKnsLCRMSEz7S896fTxNUJinJZli5wpCro/view', '_blank');
         break;
       case 'clear':
       case 'cls':
