@@ -31,8 +31,6 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Build with Astro
         run: npm run build
-        env:
-          PUBLIC_WEB3FORMS_KEY: ${{ secrets.PUBLIC_WEB3FORMS_KEY }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
