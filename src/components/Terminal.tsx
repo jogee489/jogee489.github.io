@@ -106,14 +106,13 @@ export default function Terminal() {
         break;
       case 'contact':
         push([
-          'email     jj@dorko.dev',
           'github    github.com/jogee489',
           'linkedin  linkedin.com/in/jjdorko',
-          "resume    type 'resume' to download",
+          "resume    type 'resume' to open",
         ]);
         break;
       case 'resume':
-        push(['→ opening resume.pdf …']);
+        push(['→ opening résumé in Google Docs …']);
         break;
       case 'clear':
       case 'cls':
