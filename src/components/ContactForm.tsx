@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const ACCESS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
+const ACCESS_KEY = 'a81c2fdd-2752-4ebe-8f25-04a54324f012';
 
 type FormState = { name: string; email: string; message: string };
 type Status = 'idle' | 'sending' | 'sent' | 'error';
