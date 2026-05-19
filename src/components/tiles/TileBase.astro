@@ -2,8 +2,9 @@
 interface Props {
   gradient: string;
   screenshot?: string;
+  hidePending?: boolean;
 }
-const { gradient, screenshot } = Astro.props;
+const { gradient, screenshot, hidePending = false } = Astro.props;
 
 const noiseSvg = `<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='1'/></svg>`;
 const noiseUrl = `url("data:image/svg+xml;utf8,${encodeURIComponent(noiseSvg)}")`;
@@ -17,7 +18,7 @@ const noiseUrl = `url("data:image/svg+xml;utf8,${encodeURIComponent(noiseSvg)}")
     aria-hidden="true"
     style={`position:absolute;inset:0;opacity:0.06;mix-blend-mode:overlay;background-image:${noiseUrl};pointer-events:none;`}
   ></div>
-  {!screenshot && <span class="tile-pending">screenshot pending</span>}
+  {!screenshot && !hidePending && <span class="tile-pending">screenshot pending</span>}
   {screenshot && <img src={screenshot} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />}
   <slot />
 </div>
