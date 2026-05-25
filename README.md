@@ -1,64 +1,61 @@
-# Astro Starter Kit: Blog
+# jjdorko.com — Portfolio
+
+Personal portfolio site for JJ Dorko, backend software engineer.
+
+Built with [Astro](https://astro.build), React islands, and TypeScript. Deployed to GitHub Pages via GitHub Actions.
+
+## Stack
+
+- **Astro 5** — static site framework, content collections for projects
+- **React** — interactive islands (terminal, contact form)
+- **TypeScript** — throughout
+- **Web3Forms** — contact form email delivery (no backend required)
+- **GitHub Pages** — hosting, auto-deployed on push to `main`
+
+## Local development
 
 ```sh
-npm create astro@latest -- --template blog
+npm install
+npm run dev        # dev server at localhost:4321
+npm run build      # production build to ./dist
+npm run preview    # preview the production build locally
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Project structure
 
-Features:
-
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+```
+src/
+├── components/          # Astro + React components
+│   └── tiles/           # Project card tile illustrations
+├── content/
+│   └── projects/        # One .md file per featured project
+├── data/
+│   └── skills.ts        # Skills section data
+├── pages/
+│   └── index.astro      # Homepage (single page)
+└── styles/
+    └── portfolio.css    # All styles and design tokens
+public/
+├── images/              # Project screenshots
+└── favicon.svg
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Adding a project
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+1. Create `src/content/projects/<slug>.md` with the required frontmatter:
+   ```yaml
+   order: 7
+   name: "Project Name"
+   role: "Your role"
+   stack: ["Tech", "Stack"]
+   blurb: "One-sentence description."
+   repo: "github.com/jogee489/repo-name"
+   tile: "slug"
+   image: "/images/screenshot.png"   # optional
+   ```
+2. Create a matching tile component at `src/components/tiles/<Slug>Tile.astro`.
+3. Add the tile case to `src/components/ProjectCard.astro`.
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+## Deployment
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
-
+Pushes to `main` automatically trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`), which builds with Node 24 and deploys to GitHub Pages.

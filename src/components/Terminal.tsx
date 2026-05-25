@@ -3,12 +3,12 @@ import { useEffect, useRef, useState } from 'react';
 type HistoryEntry = { kind: 'sys' | 'in' | 'out'; text: string };
 
 const PROJECTS = [
-  { name: 'heartopia-hub',            stack: 'React · Node · Capacitor', blurb: 'Cross-platform companion app for the Heartopia game.' },
-  { name: 'leap',                     stack: 'Ruby on Rails',            blurb: 'Web scraper / data-collection Rails app on JRuby.' },
-  { name: 'weather-pet',              stack: 'Flutter',                  blurb: 'Tiny weather app with a cute home-screen widget.' },
-  { name: 'LunchRoulette',            stack: 'Kotlin · Android',         blurb: 'Native Android: pick lunch when nobody can decide.' },
-  { name: 'LaserDefender',            stack: 'Unity · C#',               blurb: 'Space Invaders-style shooter built in Unity.' },
-  { name: 'marvel-rivals-randomizer', stack: 'Vue · Vite',               blurb: 'Hero/loadout randomizer for Marvel Rivals matches.' },
+  { name: 'heartopia-hub',            stack: 'React · Node · Capacitor', blurb: 'Cross-platform companion app for the Heartopia game.',  url: 'github.com/jogee489/heartopia-hub' },
+  { name: 'leap',                     stack: 'Ruby on Rails',            blurb: 'Web scraper / data-collection Rails app on JRuby.',      url: 'github.com/jogee489/leap' },
+  { name: 'weather-pet',              stack: 'Flutter',                  blurb: 'Tiny weather app with a cute home-screen widget.',        url: 'github.com/jogee489/weather-pet' },
+  { name: 'LunchRoulette',            stack: 'Kotlin · Android',         blurb: 'Native Android: pick lunch when nobody can decide.',      url: 'github.com/jogee489/LunchRoulette' },
+  { name: 'LaserDefender',            stack: 'Unity · C#',               blurb: 'Space Invaders-style shooter built in Unity.',            url: 'github.com/jogee489/LaserDefender' },
+  { name: 'marvel-rivals-randomizer', stack: 'Vue · Vite',               blurb: 'Hero/loadout randomizer for Marvel Rivals matches.',      url: 'jjdorko.com/marvel-rivals-randomizer/' },
 ];
 
 const HELP = [
@@ -93,7 +93,7 @@ export default function Terminal() {
       case 'cat': {
         const p = PROJECTS.find(p => p.name.toLowerCase() === arg.toLowerCase());
         if (!p) push([`cat: ${arg || '<missing>'}: no such project (try 'ls projects')`]);
-        else push([`# ${p.name}`, `stack: ${p.stack}`, '', p.blurb, '', `→ github.com/jogee489/${p.name}`]);
+        else push([`# ${p.name}`, `stack: ${p.stack}`, '', p.blurb, '', `→ ${p.url}`]);
         break;
       }
       case 'skills':
