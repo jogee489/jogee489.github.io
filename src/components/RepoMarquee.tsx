@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 
-type Repo = { name: string; full_name: string; html_url: string };
-type Card = { name: string; url: string; img: string; hasImg: boolean };
+type Repo = { name: string; full_name: string; html_url: string; fork: boolean; default_branch: string };
+type Card = { name: string; url: string; img: string };
 
-// Stable placeholder colors cycled by index
+// Repos to hide from the marquee
+const EXCLUDED = new Set([
+  'jogee489.github.io',
+]);
+
 const PLACEHOLDER_GRADIENTS = [
   'linear-gradient(135deg,#1a1a2e 0%,#16213e 100%)',
   'linear-gradient(135deg,#0f3460 0%,#533483 100%)',
@@ -20,15 +24,16 @@ export default function RepoMarquee() {
     fetch('https://api.github.com/users/jogee489/repos?per_page=100&sort=updated')
       .then(r => r.json())
       .then((data: Repo[]) => {
-        const mapped: Card[] = data
-          .filter(r => !(r as any).fork)
-          .map(r => ({
-            name: r.name,
-            url: r.html_url,
-            img: `https://raw.githubusercontent.com/${r.full_name}/main/.github/screenshot.png`,
-            hasImg: true,
-          }));
-        setCards(mapped);
+        if (!Array.isArray(data)) return;
+        setCards(
+          data
+            .filter(r => !r.fork && !EXCLUDED.has(r.name))
+            .map(r => ({
+              name: r.name,
+              url: r.html_url,
+              img: `https://raw.githubusercontent.com/${r.full_name}/${r.default_branch}/.github/screenshot.png`,
+            }))
+        );
       })
       .catch(() => {});
   }, []);

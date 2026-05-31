@@ -2,7 +2,9 @@
 
 ## Repo Marquee
 - [ ] On hover: card expands and plays a demo video — convention would be `.github/demo.mp4` alongside `.github/screenshot.png` in each repo
+- [ ] Swipe left/right on the marquee to speed it up or slow it down (touch + pointer drag)
 - [ ] Add screenshot to repos that are missing one (place at `.github/screenshot.png`)
+- [ ] Add GitHub token as env var / GitHub Actions secret to raise API rate limit from 60 to 5000 req/hr
 
 ## Projects
 - [ ] Upload screenshots for remaining 5 featured project tiles:
