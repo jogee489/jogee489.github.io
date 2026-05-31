@@ -581,3 +581,83 @@ button { font-family: inherit; cursor: pointer; }
   margin-left: -4px;
   animation: blink 1s steps(2, end) infinite;
 }
+
+/* ── Repo Marquee ─────────────────────────────── */
+.rmarquee {
+  padding: 64px 0 72px;
+  border-top: 1px solid var(--rule);
+  overflow: hidden;
+}
+.rmarquee-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding: 0 var(--gutter) 28px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rmarquee-arrow {
+  opacity: 0.4;
+}
+.rmarquee-viewport {
+  overflow: hidden;
+  width: 100%;
+}
+.rmarquee-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: rmarquee-scroll calc(var(--count, 8) * 4s) linear infinite;
+}
+.rmarquee-track:hover {
+  animation-play-state: paused;
+}
+@keyframes rmarquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.rmarquee-card {
+  flex-shrink: 0;
+  width: 200px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--ink);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.rmarquee-card:hover {
+  transform: scale(1.06);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+  z-index: 2;
+  position: relative;
+}
+.rmarquee-img-wrap {
+  width: 100%;
+  aspect-ratio: 9/16;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+}
+.rmarquee-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.rmarquee-name {
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rmarquee-track { animation: none; }
+}

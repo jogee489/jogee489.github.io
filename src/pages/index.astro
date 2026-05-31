@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import Hero from '../components/Hero.astro';
 import Nav from '../components/Nav.astro';
 import Projects from '../components/Projects.astro';
+import RepoMarquee from '../components/RepoMarquee';
 import Skills from '../components/Skills.astro';
 import Terminal from '../components/Terminal';
 import '../styles/portfolio.css';
@@ -36,6 +37,7 @@ import '../styles/portfolio.css';
       <About />
       <Skills />
       <Projects />
+      <RepoMarquee client:load />
       <Contact />
     </main>
     <Footer />
