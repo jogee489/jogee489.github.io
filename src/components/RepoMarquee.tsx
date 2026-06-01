@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Repo = { name: string; full_name: string; html_url: string; fork: boolean; default_branch: string };
 type Card = { name: string; url: string; img: string };
 
-// Repos to hide from the marquee
 const EXCLUDED = new Set([
   'jogee489.github.io',
 ]);
@@ -19,8 +18,13 @@ const PLACEHOLDER_GRADIENTS = [
 
 export default function RepoMarquee() {
   const [cards, setCards] = useState<Card[]>([]);
+  const fetched = useRef(false);
+  const failedUrls = useRef(new Set<string>());
 
   useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+
     fetch('https://api.github.com/users/jogee489/repos?per_page=100&sort=updated')
       .then(r => r.json())
       .then((data: Repo[]) => {
@@ -63,8 +67,12 @@ export default function RepoMarquee() {
                 <img
                   src={card.img}
                   alt=""
-                  loading="lazy"
-                  onError={e => { e.currentTarget.style.display = 'none'; }}
+                  onError={e => {
+                    const img = e.currentTarget;
+                    if (failedUrls.current.has(img.src)) return;
+                    failedUrls.current.add(img.src);
+                    img.style.display = 'none';
+                  }}
                 />
               </div>
               <span className="rmarquee-name">{card.name}</span>
