@@ -1,8 +1,8 @@
-// One shell shared by the monitor in the desk scene and the full-screen console.
+// Wires the shell engine to the page: the filesystem is read from the page's own content,
+// and the same shell drives the monitor in the desk scene and the full-screen console.
 import { SKILL_GROUPS } from '../data/skills';
+import { createShell, dir, file, projectsDir, type FsNode, type Project } from './shell-core';
 
-type Line = { t: 'in' | 'out' | 'sys'; s: string; cwd?: string };
-type Project = { id: string; name: string; stack: string; blurb: string; url: string };
 type DeskApi = {
   inHero(): boolean;
   zoom(to: number, ms: number): Promise<void>;
@@ -12,24 +12,10 @@ type DeskApi = {
 
 const RESUME_URL = 'https://docs.google.com/document/d/1lEfCjaSvtYKnsLCRMSEz7S896fTxNUJinJZli5wpCro/view';
 const SECTIONS = ['about', 'experience', 'work', 'repos', 'contact'];
-const COMMANDS = ['help', 'whoami', 'ls', 'cat', 'open', 'cd', 'resume', 'skills', 'contact', 'lamp', 'history', 'date', 'pwd', 'clear', 'exit'];
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const coarse = matchMedia('(pointer: coarse)').matches;
 
 const PROJECTS: Project[] = JSON.parse(document.getElementById('shell-data')?.textContent || '[]');
-
-const HELP = [
-  'whoami            who this is',
-  'ls [projects]     list sections or projects',
-  'cat <project>     one project in detail (tab completes)',
-  'open <project>    open its repo or live site',
-  'cd <section>      move the page: ' + SECTIONS.join(', '),
-  'resume            the résumé as plain text',
-  'skills            what I work with',
-  'contact           where to reach me',
-  'lamp              switch the desk lamp',
-  'clear, exit       tidy up, or close (` works too)',
-];
 
 // TODO: fetch resume content from an endpoint instead of hardcoding
 const RESUME = [
@@ -100,173 +86,77 @@ const RESUME = [
   '  Werewolf app      MEAN stack',
   '  LunchRoulette     Kotlin / Android',
   '  Chaos Controller  Arduino',
-  '',
-  '→ opening full résumé in Google Docs …',
 ];
 
-const lines: Line[] = [];
-const subs: (() => void)[] = [];
-const hist: string[] = [];
-let hIdx = 0;
+// ── the filesystem is the page's own content ────────────
+const text = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+/** text directly inside an element, leaving out links like "Full résumé" */
+const ownText = (el: Element) =>
+  [...el.childNodes].filter(n => n.nodeType === Node.TEXT_NODE).map(n => n.textContent).join(' ').replace(/\s+/g, ' ').trim();
+const paragraphs = (els: Iterable<Element>) => [...els].flatMap((el, i) => (i ? ['', text(el)] : [text(el)]));
 
-export const shell = {
-  lines,
-  input: '',
-  cwd: '~',
-  /** bumps whenever lines change, so views can skip redundant redraws */
-  v: 0,
+function jobLines(job: Element) {
+  const out = [text(job.querySelector('h3')), text(job.querySelector('.job-when'))];
+  const prev = job.querySelector('.job-prev');
+  if (prev) out.push(text(prev));
+  out.push('', text(job.querySelector('.job-desc')));
+  const wins = [...job.querySelectorAll('.job-wins li')].map(li => '· ' + text(li));
+  if (wins.length) out.push('', ...wins);
+  out.push('', text(job.querySelector('.job-tech')));
+  return out;
+}
+
+// Filled by the repo strip once it has the list from GitHub
+let repos: Record<string, FsNode> = {};
+window.addEventListener('repos:loaded', e => {
+  const list = (e as CustomEvent<{ name: string; url: string }[]>).detail;
+  repos = Object.fromEntries(list.map(r => [r.name, file(() => [r.name, r.url.replace('https://', '')], { url: r.url })]));
+});
+
+const root = dir({
+  about: dir({ 'about.txt': file(() => paragraphs(document.querySelectorAll('#about p'))) }),
+  experience: dir(() => Object.fromEntries(
+    [...document.querySelectorAll<HTMLElement>('#experience [data-file]')].map(el =>
+      [el.dataset.file!, file(() => (el.matches('.job') ? jobLines(el) : [ownText(el)]))]),
+  )),
+  work: projectsDir(PROJECTS),
+  repos: dir(() => repos, { empty: 'Nothing here yet. The list loads from GitHub, so try again in a moment.' }),
+  contact: dir({
+    linkedin: file(() => ['linkedin.com/in/jjdorko'], { url: 'https://linkedin.com/in/jjdorko' }),
+    github: file(() => ['github.com/jogee489'], { url: 'https://github.com/jogee489' }),
+    'form.txt': file(() => ['The contact form is at the bottom of the page.', "Run 'cd contact' to go there."]),
+  }),
+  'resume.txt': file(() => RESUME, { url: RESUME_URL }),
+});
+
+const core = createShell({
+  root,
+  projects: PROJECTS,
+  skills: SKILL_GROUPS,
+  resume: RESUME,
+  resumeUrl: RESUME_URL,
+  actions: {
+    goto,
+    top() {
+      closeConsole();
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    },
+    open(url) { window.open(url, '_blank', 'noopener'); },
+    close() {
+      closeConsole();
+      document.getElementById('screen-input')?.blur();
+    },
+    lamp: () => (shell.desk ? shell.desk.toggleLamp() : null),
+  },
+});
+
+export const shell = Object.assign(core, {
   /** registered by the desk scene once WebGL is up */
   desk: null as DeskApi | null,
-  promptFor: (cwd: string) => `jj@dorko:${cwd}$ `,
-  on(fn: () => void) { subs.push(fn); },
-  emit() { subs.forEach(f => f()); },
-  run,
-  complete,
   goto,
   openConsole,
   closeConsole,
-};
-
-const out = (...ls: string[]) => ls.forEach(s => lines.push({ t: 'out', s }));
-const echo = (s: string) => lines.push({ t: 'in', s, cwd: shell.cwd });
-const findProject = (a: string) => {
-  const q = a.toLowerCase().replace(/\/$/, '');
-  return PROJECTS.find(p => p.id === q || p.name.toLowerCase() === q);
-};
-
-lines.push({ t: 'sys', s: `Last login: ${new Date().toDateString()} on ttys001` });
-echo('whoami');
-out('JJ Dorko. Backend engineer: Rails, Java, Linux. Available for freelance work.');
-echo('ls projects');
-out(PROJECTS.slice(0, 4).map(p => p.id).join('  '), PROJECTS.slice(4).map(p => p.id).join('  '));
-lines.push({ t: 'sys', s: "Type 'help' to see what else this shell can do." });
-
-function run(raw: string) {
-  const cmd = raw.trim();
-  echo(cmd);
-  if (cmd) hist.push(cmd);
-  hIdx = hist.length;
-  const [head = '', ...rest] = cmd.split(/\s+/);
-  const arg = rest.join(' ');
-
-  switch (head.toLowerCase()) {
-    case '':
-      break;
-    case 'help':
-    case '?':
-      out(...HELP);
-      break;
-    case 'whoami':
-      out('JJ Dorko', 'Backend engineer. Rails, Java and Linux for over ten years.', 'Freelancing now. Teaches English to students aged 5 to 65.');
-      break;
-    case 'ls': {
-      const a = arg.replace(/^~\/?/, '').toLowerCase();
-      if (!a) out(SECTIONS.map(s => s + '/').join('  ') + '  projects/  resume.txt');
-      else if (a.startsWith('proj') || a.startsWith('work')) PROJECTS.forEach(p => out(`${p.id.padEnd(27)}${p.stack}`));
-      else out(`ls: ${arg}: No such file or directory`);
-      break;
-    }
-    case 'cat': {
-      if (/^resume(\.txt)?$/i.test(arg)) { out(...RESUME.slice(0, -1)); break; }
-      const p = findProject(arg);
-      if (!p) out(`cat: ${arg || '<project>'}: No such project. Try 'ls projects'.`);
-      else out(p.name, p.stack, '', p.blurb, '', p.url.replace('https://', ''));
-      break;
-    }
-    case 'open': {
-      const p = findProject(arg);
-      if (!p) { out(`open: ${arg || '<project>'}: No such project. Try 'ls projects'.`); break; }
-      out(`Opening ${p.url.replace('https://', '')}`);
-      window.open(p.url, '_blank', 'noopener');
-      break;
-    }
-    case 'cd': {
-      const t = arg.replace(/^~\/?/, '').replace(/\/$/, '').toLowerCase();
-      if (!t || t === '..') {
-        closeConsole();
-        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
-      } else if (SECTIONS.includes(t) || t === 'projects') {
-        goto(t === 'projects' ? 'work' : t);
-      } else {
-        out(`cd: no such directory: ${arg}. Try ${SECTIONS.join(', ')}.`);
-      }
-      break;
-    }
-    case 'pwd':
-      out('/home/jj' + (shell.cwd === '~' ? '' : shell.cwd.slice(1)));
-      break;
-    case 'resume':
-      out(...RESUME);
-      window.open(RESUME_URL, '_blank', 'noopener');
-      break;
-    case 'skills':
-      SKILL_GROUPS.forEach(g => out(`${g.label.toLowerCase().padEnd(15)}${g.items.join(', ')}`));
-      break;
-    case 'contact':
-      out('linkedin  linkedin.com/in/jjdorko', 'github    github.com/jogee489', "form      'cd contact'");
-      break;
-    case 'lamp':
-      if (!shell.desk) out('lamp: the desk needs WebGL, which this browser has off.');
-      else out(shell.desk.toggleLamp() ? 'lamp: on' : 'lamp: off. The monitor is enough light anyway.');
-      break;
-    case 'history':
-      hist.forEach((h, i) => out(`${String(i + 1).padStart(4)}  ${h}`));
-      break;
-    case 'date':
-      out(new Date().toString());
-      break;
-    case 'clear':
-    case 'cls':
-      lines.length = 0;
-      break;
-    case 'exit':
-    case 'quit':
-      closeConsole();
-      document.getElementById('screen-input')?.blur();
-      break;
-    case 'sudo':
-      out('jj is not in the sudoers file. This incident will be reported.');
-      break;
-    case 'rm':
-      out(/-\w*r\w*f|-\w*f\w*r/.test(arg) ? 'Not today.' : 'rm: permission denied');
-      break;
-    case 'echo':
-      out(arg);
-      break;
-    case 'vim':
-    case 'vi':
-    case 'nano':
-    case 'emacs':
-      out(`${head}: this shell is read-only. Try 'cat' instead.`);
-      break;
-    default:
-      out(`${head}: command not found. Try 'help'.`);
-  }
-  if (lines.length > 400) lines.splice(0, lines.length - 400);
-  shell.v++;
-  shell.emit();
-}
-
-function complete(v: string) {
-  const m = v.match(/^(\S*)(\s+)?(.*)$/);
-  if (!m) return v;
-  const list = (opts: string[]) => { echo(v); out(opts.join('  ')); shell.v++; shell.emit(); };
-  if (!m[2]) {
-    const c = COMMANDS.filter(c => c.startsWith(m[1].toLowerCase()));
-    if (c.length === 1) return c[0] + ' ';
-    if (c.length > 1 && m[1]) list(c);
-    return v;
-  }
-  const cmd = m[1].toLowerCase();
-  const pool = cmd === 'cd' ? SECTIONS
-    : cmd === 'cat' || cmd === 'open' ? PROJECTS.map(p => p.id)
-    : cmd === 'ls' ? ['projects']
-    : [];
-  const c = pool.filter(x => x.startsWith(m[3].toLowerCase()));
-  if (c.length === 1) return `${m[1]} ${c[0]}`;
-  if (c.length > 1) list(c);
-  return v;
-}
+});
 
 function goto(id: string) {
   const el = document.getElementById(id);
@@ -327,18 +217,16 @@ function bindInput(el: HTMLInputElement, onEscape: () => void, onBacktick: () =>
       const v = el.value;
       el.value = '';
       shell.input = '';
-      run(v);
+      shell.run(v);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      if (hIdx > 0) hIdx--;
-      set(hist[hIdx] || '');
+      set(shell.prev());
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      if (hIdx < hist.length) hIdx++;
-      set(hist[hIdx] || '');
+      set(shell.next());
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      set(complete(el.value));
+      set(shell.complete(el.value));
     } else if (e.key === 'Escape') {
       e.preventDefault();
       onEscape();
@@ -356,7 +244,7 @@ document.getElementById('console-form')?.addEventListener('submit', e => e.preve
 document.getElementById('console-close')?.addEventListener('click', () => closeConsole());
 document.getElementById('chips')?.addEventListener('click', e => {
   const b = (e.target as Element).closest<HTMLElement>('button[data-cmd]');
-  if (b?.dataset.cmd) run(b.dataset.cmd);
+  if (b?.dataset.cmd) shell.run(b.dataset.cmd);
 });
 document.querySelectorAll('[data-open-shell]').forEach(b => b.addEventListener('click', () => openConsole()));
 
@@ -378,7 +266,7 @@ function renderConsole(force: boolean) {
   if (!force && (renderedV === shell.v || !con.classList.contains('open'))) return;
   renderedV = shell.v;
   const frag = document.createDocumentFragment();
-  for (const l of lines) {
+  for (const l of shell.lines) {
     const d = document.createElement('div');
     d.className = 'ln ' + l.t;
     if (l.t === 'in') {

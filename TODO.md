@@ -16,6 +16,10 @@
 ## Experience
 - [ ] Add anything since 2021 (freelance work, teaching)
 
+## Testing
+- [ ] Run `npm test` in the deploy workflow before the build, so a broken command blocks the deploy
+- [ ] Run the Playwright suite in CI (needs `npx playwright install --with-deps chromium`, about a minute)
+
 ## Resume
 - [ ] Pull resume content from an API endpoint instead of hardcoding in `src/scripts/shell.ts`
 

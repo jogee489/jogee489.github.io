@@ -24,6 +24,16 @@ npm run build      # production build to ./dist
 npm run preview    # preview the production build locally
 ```
 
+## Testing
+
+```sh
+npm test           # unit tests for the shell's commands (Vitest, well under a second)
+npm run test:e2e   # Playwright against a production build: console, keyboard, scrolling, links
+```
+
+- **Unit tests** (`src/scripts/shell-core.test.ts`) cover every command, path handling and tab completion. The shell engine in `shell-core.ts` has no DOM access, so these run in plain Node.
+- **End-to-end tests** (`tests/e2e/`) cover the wiring the unit tests can't see. GitHub and Google Fonts are stubbed, so they run offline. On a new machine, run `npx playwright install chromium` once first.
+
 ## Project structure
 
 ```
@@ -37,7 +47,10 @@ src/
 │   └── index.astro      # Homepage (single page)
 ├── scripts/
 │   ├── desk.ts          # three.js desk scene and camera move
-│   └── shell.ts         # Shell commands, shared by the monitor and the full-screen console
+│   ├── shell-core.ts    # Shell commands and filesystem logic (no DOM, unit tested)
+│   └── shell.ts         # Builds the shell's files from the page; drives the monitor and console
+tests/
+└── e2e/                 # Playwright end-to-end tests
 └── styles/
     └── portfolio.css    # All styles and design tokens
 public/

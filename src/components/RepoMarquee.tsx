@@ -22,15 +22,16 @@ export default function RepoMarquee() {
       .then(r => r.json())
       .then((data: Repo[]) => {
         if (!Array.isArray(data)) return;
-        setCards(
-          data
-            .filter(r => !r.fork && !EXCLUDED.has(r.name))
-            .map(r => ({
-              name: r.name,
-              url: r.html_url,
-              img: `https://raw.githubusercontent.com/${r.full_name}/${r.default_branch}/.github/screenshot.png`,
-            }))
-        );
+        const list = data
+          .filter(r => !r.fork && !EXCLUDED.has(r.name))
+          .map(r => ({
+            name: r.name,
+            url: r.html_url,
+            img: `https://raw.githubusercontent.com/${r.full_name}/${r.default_branch}/.github/screenshot.png`,
+          }));
+        setCards(list);
+        // The shell lists these under ~/repos
+        window.dispatchEvent(new CustomEvent('repos:loaded', { detail: list }));
       })
       .catch(() => {});
   }, []);
