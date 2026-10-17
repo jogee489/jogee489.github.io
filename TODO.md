@@ -1,18 +1,23 @@
 # TODO
 
-## Repo Marquee
+## Desk scene
+- [ ] Model the desk in Blender with baked lighting to replace the primitive shapes in `src/scripts/desk.ts` (better look, cheaper to render)
+
+## Repo strip
 - [ ] On hover: card expands and plays a demo video — convention would be `.github/demo.mp4` alongside `.github/screenshot.png` in each repo
-- [ ] Swipe left/right on the marquee to speed it up or slow it down (touch + pointer drag)
+- [ ] Swipe left/right on the strip to speed it up or slow it down (touch + pointer drag)
 - [ ] Add screenshot to repos that are missing one (place at `.github/screenshot.png`)
 - [ ] Add GitHub token as env var / GitHub Actions secret to raise API rate limit from 60 to 5000 req/hr
 
-## Projects
-- [ ] Upload screenshots for remaining 5 featured project tiles:
-      Leap, Weather Pet, LunchRoulette, LaserDefender, Marvel Rivals Randomizer
-- [ ] Add `open <project>` terminal command to launch the project URL in a new tab
+## Work
+- [ ] Screenshots for Leap, Weather Pet, Lunch Roulette, Laser Defender and Marvel Rivals Randomizer, and decide how Work shows more than one (today only the first project with an `image` is featured)
+- [ ] Confirm the Heartopia Hub description (it used to say "tabletop game companion"; the screenshot shows a collection tracker)
+
+## Experience
+- [ ] Add anything since 2021 (freelance work, teaching)
 
 ## Resume
-- [ ] Pull resume content from an API endpoint instead of hardcoding in Terminal.tsx
+- [ ] Pull resume content from an API endpoint instead of hardcoding in `src/scripts/shell.ts`
 
 ## Ideas / Bigger lifts
 - [ ] Embed live demos for Capacitor/Flutter apps (Heartopia Hub, Weather Pet) via iframe

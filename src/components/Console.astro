@@ -1,0 +1,31 @@
+---
+interface Props {
+  projects: { id: string; name: string; stack: string; blurb: string; url: string }[];
+}
+const { projects } = Astro.props;
+const chips = ['help', 'whoami', 'ls projects', 'resume', 'cd work', 'lamp'];
+---
+
+<script type="application/json" id="shell-data" set:html={JSON.stringify(projects)} />
+
+<div class="console" id="console" role="dialog" aria-modal="true" aria-label="Shell" aria-hidden="true" inert>
+  <div class="console-bar">
+    <span>jj@dorko: <span data-cwd>~</span> — zsh</span>
+    <button type="button" id="console-close">Close <kbd>esc</kbd></button>
+  </div>
+  <div class="console-inner">
+    <div class="console-out" id="console-out" aria-live="polite"></div>
+    <form class="console-form" id="console-form">
+      <label for="console-input">jj@dorko:<span data-cwd>~</span>$ </label>
+      <input id="console-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    </form>
+    <div class="chips" id="chips">
+      {chips.map(c => <button type="button" data-cmd={c}>{c}</button>)}
+      <span class="console-hint">Tab completes. Arrows walk history.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/shell';
+</script>

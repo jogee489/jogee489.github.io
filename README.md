@@ -2,12 +2,15 @@
 
 Personal portfolio site for JJ Dorko, backend software engineer.
 
-Built with [Astro](https://astro.build), React islands, and TypeScript. Deployed to GitHub Pages via GitHub Actions.
+Built with [Astro](https://astro.build), three.js, React islands, and TypeScript. Deployed to GitHub Pages via GitHub Actions.
+
+The page opens on a 3D desk whose monitor runs a working shell. Scrolling moves the camera into the screen, and the rest of the page is a two-column résumé layout. Press `` ` `` anywhere to open the same shell full screen.
 
 ## Stack
 
-- **Astro 5** — static site framework, content collections for projects
-- **React** — interactive islands (terminal, contact form)
+- **Astro** — static site framework, content collections for projects
+- **three.js** — the desk scene
+- **React** — interactive islands (contact form, repo strip)
 - **TypeScript** — throughout
 - **Web3Forms** — contact form email delivery (no backend required)
 - **GitHub Pages** — hosting, auto-deployed on push to `main`
@@ -25,14 +28,16 @@ npm run preview    # preview the production build locally
 
 ```
 src/
-├── components/          # Astro + React components
-│   └── tiles/           # Project card tile illustrations
+├── components/          # Astro + React components (one per page section)
 ├── content/
 │   └── projects/        # One .md file per featured project
 ├── data/
-│   └── skills.ts        # Skills section data
+│   └── skills.ts        # Output of the shell's `skills` command
 ├── pages/
 │   └── index.astro      # Homepage (single page)
+├── scripts/
+│   ├── desk.ts          # three.js desk scene and camera move
+│   └── shell.ts         # Shell commands, shared by the monitor and the full-screen console
 └── styles/
     └── portfolio.css    # All styles and design tokens
 public/
@@ -50,11 +55,9 @@ public/
    stack: ["Tech", "Stack"]
    blurb: "One-sentence description."
    repo: "github.com/jogee489/repo-name"
-   tile: "slug"
    image: "/images/screenshot.png"   # optional
    ```
-2. Create a matching tile component at `src/components/tiles/<Slug>Tile.astro`.
-3. Add the tile case to `src/components/ProjectCard.astro`.
+2. That's it. The project shows up in Work and in the shell (`ls projects`, `cat <slug>`, `open <slug>`). The first project with an `image` is the featured one.
 
 ## Deployment
 

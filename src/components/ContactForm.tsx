@@ -5,39 +5,12 @@ const ACCESS_KEY = 'a81c2fdd-2752-4ebe-8f25-04a54324f012';
 type FormState = { name: string; email: string; message: string };
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
-function FloatField({
-  id, label, value, onChange, type = 'text', multiline = false, disabled = false,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  type?: string;
-  multiline?: boolean;
-  disabled?: boolean;
-}) {
-  const filled = !!value;
-  const commonProps = {
-    id,
-    value,
-    onChange,
-    required: true,
-    disabled,
-    className: 'float-input',
-    placeholder: ' ',
-  };
-  return (
-    <label className={`float-field${filled ? ' is-filled' : ''}`} htmlFor={id}>
-      {multiline ? (
-        <textarea {...commonProps} rows={4} />
-      ) : (
-        <input {...commonProps} type={type} autoComplete="off" />
-      )}
-      <span className="float-label">{label}</span>
-      <span className="float-line" />
-    </label>
-  );
-}
+const STATUS_TEXT: Record<Status, string> = {
+  idle: '',
+  sending: 'Sending…',
+  sent: "Sent. Thanks, I'll be in touch.",
+  error: "That didn't go through. Try again, or reach me on LinkedIn.",
+};
 
 export default function ContactForm() {
   const [state, setState] = useState<FormState>({ name: '', email: '', message: '' });
@@ -68,39 +41,34 @@ export default function ContactForm() {
       if (data.success) {
         setStatus('sent');
         setState({ name: '', email: '', message: '' });
-        setTimeout(() => setStatus('idle'), 4000);
       } else {
         setStatus('error');
-        setTimeout(() => setStatus('idle'), 4000);
       }
     } catch {
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 4000);
     }
+    setTimeout(() => setStatus('idle'), 6000);
   };
 
-  const busy = status === 'sending' || status === 'sent';
-  const sent = status === 'sent';
-  const err  = status === 'error';
+  const busy = status === 'sending';
 
   return (
-    <form onSubmit={onSubmit} className={`contact-form${sent ? ' is-sent' : ''}`}>
-      <FloatField id="cf-name"    label="Your name"            value={state.name}    onChange={update('name')}    disabled={busy} />
-      <FloatField id="cf-email"   label="Email"                value={state.email}   onChange={update('email')}   type="email" disabled={busy} />
-      <FloatField id="cf-message" label="What's on your mind?" value={state.message} onChange={update('message')} multiline disabled={busy} />
+    <form onSubmit={onSubmit} className="form">
+      <div className="field">
+        <label htmlFor="cf-name">Name</label>
+        <input id="cf-name" value={state.name} onChange={update('name')} autoComplete="name" required disabled={busy} />
+      </div>
+      <div className="field">
+        <label htmlFor="cf-email">Email</label>
+        <input id="cf-email" type="email" value={state.email} onChange={update('email')} autoComplete="email" required disabled={busy} />
+      </div>
+      <div className="field wide">
+        <label htmlFor="cf-message">What are you working on?</label>
+        <textarea id="cf-message" value={state.message} onChange={update('message')} required disabled={busy} />
+      </div>
       <div className="form-row">
-        <button type="submit" className="btn btn-primary form-submit" disabled={busy}>
-          <span>
-            {status === 'sending' ? 'Sending…'
-              : sent              ? 'Sent — talk soon'
-              : err               ? 'Something went wrong'
-              : 'Send message'}
-          </span>
-          <span className="btn-arrow">
-            {status === 'sending' ? '' : sent ? '✓' : err ? '✕' : '→'}
-          </span>
-        </button>
-        <span className="form-hint">No autoresponders, no funnels.</span>
+        <button type="submit" className="btn" disabled={busy}>Send message</button>
+        <span className={`form-status${status === 'error' ? ' is-error' : ''}`} role="status">{STATUS_TEXT[status]}</span>
       </div>
     </form>
   );

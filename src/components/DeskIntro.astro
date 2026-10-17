@@ -1,0 +1,38 @@
+---
+interface Props {
+  /** screenshot shown on the phone lying on the desk */
+  phoneShot?: string;
+}
+const { phoneShot } = Astro.props;
+---
+
+<section class="scene" id="top" aria-label="Intro" data-phone-shot={phoneShot}>
+  <div class="scene-pin">
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <div class="scene-copy">
+      <h1>JJ Dorko</h1>
+      <p class="lede">
+        Backend engineer. Over ten years of Rails, Java and Linux, most of them keeping a hospital
+        messaging platform up. Available for freelance work.
+      </p>
+      <p class="hint">
+        <span class="hint-fine">That monitor runs a real shell. Click it and type <code>help</code>, or keep scrolling to step inside.</span>
+        <span class="hint-touch">That monitor runs a real shell. Tap it to try, or keep scrolling to step inside.</span>
+      </p>
+    </div>
+    <div class="scene-veil" aria-hidden="true"></div>
+  </div>
+  <input
+    id="screen-input"
+    class="sr-only"
+    type="text"
+    autocomplete="off"
+    autocapitalize="off"
+    spellcheck="false"
+    aria-label="Type a command into the monitor shell"
+  />
+</section>
+
+<script>
+  import '../scripts/desk';
+</script>

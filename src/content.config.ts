@@ -23,7 +23,6 @@ const projects = defineCollection({
 		stack: z.array(z.string()),
 		blurb: z.string(),
 		repo: z.string(),
-		tile: z.string(),
 		image: z.string().optional(),
 	}),
 });

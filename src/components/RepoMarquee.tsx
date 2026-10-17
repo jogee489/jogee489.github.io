@@ -7,19 +7,12 @@ const EXCLUDED = new Set([
   'jogee489.github.io',
 ]);
 
-const PLACEHOLDER_GRADIENTS = [
-  'linear-gradient(135deg,#1a1a2e 0%,#16213e 100%)',
-  'linear-gradient(135deg,#0f3460 0%,#533483 100%)',
-  'linear-gradient(135deg,#1b1b2f 0%,#2c2c54 100%)',
-  'linear-gradient(135deg,#162447 0%,#1f4068 100%)',
-  'linear-gradient(135deg,#2d132c 0%,#ee4540 100%)',
-  'linear-gradient(135deg,#0d0d0d 0%,#2b2d42 100%)',
-];
-
 export default function RepoMarquee() {
   const [cards, setCards] = useState<Card[]>([]);
   const fetched = useRef(false);
-  const failedUrls = useRef(new Set<string>());
+  // Keyed by URL and shared by both copies of a card, so each screenshot is requested once
+  const [loaded, setLoaded] = useState<Set<string>>(() => new Set());
+  const [failed, setFailed] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     if (fetched.current) return;
@@ -44,41 +37,40 @@ export default function RepoMarquee() {
 
   if (!cards.length) return null;
 
+  const add = (set: Set<string>, url: string) => (set.has(url) ? set : new Set(set).add(url));
+  // Two copies of the list so the loop can wrap without a seam
   const track = [...cards, ...cards];
 
   return (
-    <div className="rmarquee">
-      <div className="rmarquee-label">on github<span className="rmarquee-arrow">→</span></div>
-      <div className="rmarquee-viewport">
-        <div className="rmarquee-track" style={{ '--count': cards.length } as React.CSSProperties}>
-          {track.map((card, i) => (
+    <div className="strip">
+      <div className="strip-track" style={{ '--count': cards.length } as React.CSSProperties}>
+        {track.map((card, i) => {
+          const copy = i >= cards.length;
+          return (
             <a
               key={i}
               href={card.url}
               target="_blank"
               rel="noreferrer"
-              className="rmarquee-card"
-              aria-label={card.name}
+              className={`repo${loaded.has(card.img) ? ' has-img' : ''}`}
+              aria-hidden={copy || undefined}
+              tabIndex={copy ? -1 : undefined}
             >
-              <div
-                className="rmarquee-img-wrap"
-                style={{ background: PLACEHOLDER_GRADIENTS[i % PLACEHOLDER_GRADIENTS.length] }}
-              >
+              {!failed.has(card.img) && (
                 <img
                   src={card.img}
                   alt=""
-                  onError={e => {
-                    const img = e.currentTarget;
-                    if (failedUrls.current.has(img.src)) return;
-                    failedUrls.current.add(img.src);
-                    img.style.display = 'none';
-                  }}
+                  onLoad={() => setLoaded(s => add(s, card.img))}
+                  onError={() => setFailed(s => add(s, card.img))}
                 />
-              </div>
-              <span className="rmarquee-name">{card.name}</span>
+              )}
+              <span className="rn">{card.name}</span>
+              <span className="rv">
+                View repo <svg className="ico" aria-hidden="true"><use href="#i-arrow" /></svg>
+              </span>
             </a>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );

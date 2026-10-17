@@ -1,28 +1,37 @@
 ---
 import { getCollection } from 'astro:content';
-import ProjectCard from './ProjectCard.astro';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+// The first project with a screenshot gets the featured slot; the rest are a list
+const featured = projects.find(p => p.data.image);
+const rest = projects.filter(p => p !== featured);
+const href = (repo: string) => `https://${repo}`;
 ---
 
-<section id="work" class="section section-work">
-  <div class="work-head">
-    <h2 class="section-eyebrow" data-reveal>Selected work</h2>
-    <span class="work-head-count" data-reveal style="--reveal-delay:60ms">Six projects</span>
-  </div>
-  <div class="work-grid">
-    {projects.map((p, i) => (
-      <ProjectCard
-        n={String(p.data.order).padStart(2, '0')}
-        name={p.data.name}
-        role={p.data.role}
-        stack={p.data.stack}
-        blurb={p.data.blurb}
-        repo={p.data.repo}
-        tile={p.data.tile}
-        image={p.data.image}
-        delay={i * 60}
-      />
+<section id="work">
+  <h2 class="sec-h">Work</h2>
+  {featured && (
+    <article class="feature">
+      <img src={featured.data.image} alt={`${featured.data.name} app screen`} width="1080" height="2400" loading="lazy" />
+      <div>
+        <h3>{featured.data.name}</h3>
+        <p class="meta">{featured.data.stack.join(', ')}</p>
+        <p class="desc">{featured.data.blurb}</p>
+        <a class="go" href={href(featured.data.repo)} target="_blank" rel="noreferrer">
+          Source <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg>
+        </a>
+      </div>
+    </article>
+  )}
+  <ul class="projects">
+    {rest.map(p => (
+      <li>
+        <a href={href(p.data.repo)} target="_blank" rel="noreferrer">
+          <span class="n">{p.data.name} <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg></span>
+          <span class="s">{p.data.stack.join(', ')}</span>
+          <p class="b">{p.data.blurb}</p>
+        </a>
+      </li>
     ))}
-  </div>
+  </ul>
 </section>

@@ -1,0 +1,39 @@
+---
+const RESUME_URL = 'https://docs.google.com/document/d/1lEfCjaSvtYKnsLCRMSEz7S896fTxNUJinJZli5wpCro/view';
+const sections = [
+  ['about', 'About'],
+  ['experience', 'Experience'],
+  ['work', 'Work'],
+  ['repos', 'Repos'],
+  ['contact', 'Contact'],
+];
+const links = [
+  ['GitHub', 'https://github.com/jogee489'],
+  ['LinkedIn', 'https://linkedin.com/in/jjdorko'],
+  ['Résumé', RESUME_URL],
+];
+---
+
+<header class="side">
+  <a href="#top" class="side-name">JJ Dorko</a>
+  <p class="side-role">Backend engineer</p>
+  <p class="side-line">Rails, Java and Linux for over ten years. Now freelancing, and teaching English between contracts.</p>
+  <nav class="toc" aria-label="Sections">
+    {sections.map(([id, label]) => (
+      <a href={`#${id}`} data-sec={id}><span class="bar"></span>{label}</a>
+    ))}
+  </nav>
+  <div class="side-foot">
+    <button class="side-shell" type="button" data-open-shell aria-label="Open the shell">
+      <span class="term"><b>jj@dorko</b>:<span data-cwd>~</span>$</span>
+      <span class="open">Open shell <kbd>`</kbd></span>
+    </button>
+    <div class="links">
+      {links.map(([label, href]) => (
+        <a href={href} target="_blank" rel="noreferrer">
+          {label} <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg>
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
