@@ -128,6 +128,37 @@ test('open and resume launch the right links', async ({ page }) => {
   ]);
 });
 
+test('the command buttons, Close and exit work', async ({ page }) => {
+  await openConsole(page);
+  await page.getByRole('button', { name: 'whoami', exact: true }).click();
+  await expect(page.locator('#console-out')).toContainText('Backend engineer. Rails, Java and Linux for over ten years.');
+  await page.locator('#console-close').click();
+  await expect(con(page)).not.toHaveClass(/open/);
+  await openConsole(page);
+  await submit(page, 'exit');
+  await expect(con(page)).not.toHaveClass(/open/);
+});
+
+test('arrow keys walk history in the console', async ({ page }) => {
+  await openConsole(page);
+  await run(page, 'whoami');
+  await run(page, 'pwd');
+  const input = page.locator('#console-input');
+  await input.press('ArrowUp');
+  await expect(input).toHaveValue('pwd');
+  await input.press('ArrowUp');
+  await expect(input).toHaveValue('whoami');
+  await input.press('ArrowDown');
+  await expect(input).toHaveValue('pwd');
+});
+
+test('lamp switches the real desk lamp', async ({ page }) => {
+  // The desk only answers once WebGL is running, so this also proves the scene loaded
+  await openConsole(page);
+  expect(await run(page, 'lamp')).toEqual(['lamp: off. The monitor is enough light anyway.']);
+  expect(await run(page, 'lamp')).toEqual(['lamp: on']);
+});
+
 test('tab completes paths in the console', async ({ page }) => {
   await openConsole(page);
   const input = page.locator('#console-input');

@@ -249,6 +249,49 @@ describe('other commands', () => {
     expect(advertised.filter(c => !COMMANDS.includes(c))).toEqual([]);
   });
 
+  it('prints help and who this is', () => {
+    const { run } = setup();
+    expect(run('help')).toEqual(HELP);
+    expect(run('?')).toEqual(HELP);
+    expect(run('whoami')).toEqual([
+      'JJ Dorko',
+      'Backend engineer. Rails, Java and Linux for over ten years.',
+      'Freelancing now. Teaches English to students aged 5 to 65.',
+    ]);
+  });
+
+  it('lists where to reach me', () => {
+    expect(setup().run('contact')).toEqual(['linkedin  linkedin.com/in/jjdorko', 'github    github.com/jogee489', "form      'cd contact'"]);
+  });
+
+  it('numbers past commands in history, including itself', () => {
+    const { run } = setup();
+    run('whoami');
+    run('ls work');
+    expect(run('history')).toEqual(['   1  whoami', '   2  ls work', '   3  history']);
+  });
+
+  it('prints the date from the clock', () => {
+    expect(setup().run('date')).toEqual([new Date('2026-10-17T12:00:00Z').toString()]);
+  });
+
+  it('accepts the usual aliases, in any case', () => {
+    const { sh, run, actions } = setup();
+    expect(run('LS ABOUT')).toEqual(['about.txt']);
+    for (const editor of ['vi', 'nano', 'emacs']) expect(run(editor)).toEqual([`${editor}: this shell is read-only. Try 'cat' instead.`]);
+    run('quit');
+    expect(actions.close).toHaveBeenCalledTimes(1);
+    run('cls');
+    expect(sh.lines).toEqual([]);
+  });
+
+  it('shows a fresh prompt for an empty line and leaves it out of history', () => {
+    const { sh, run } = setup();
+    expect(run('   ')).toEqual([]);
+    expect(sh.lines[sh.lines.length - 1]).toEqual({ t: 'in', s: '', cwd: '~' });
+    expect(sh.prev()).toBe('');
+  });
+
   it('prints the résumé and opens the full one', () => {
     const { run, actions } = setup();
     expect(run('resume')).toEqual(['RESUME TEXT', '→ opening full résumé in Google Docs …']);

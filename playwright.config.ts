@@ -7,7 +7,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? 'github' : 'list',
+  // In CI, annotate failures on the run and keep an HTML report to download
+  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     trace: 'retain-on-failure',
@@ -23,9 +24,9 @@ export default defineConfig({
       },
     },
   ],
-  // Tests run against the production build, not the dev server
+  // Tests run against the production build, not the dev server. CI has already built it.
   webServer: {
-    command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${PORT}`,
+    command: `${process.env.CI ? '' : 'npm run build && '}npm run preview -- --host 127.0.0.1 --port ${PORT}`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
