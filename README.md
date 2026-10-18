@@ -28,7 +28,7 @@ npm run preview    # preview the production build locally
 
 ```sh
 npm test           # unit tests for the shell's commands (Vitest, well under a second)
-npm run test:e2e   # Playwright against a production build: console, keyboard, scrolling, links
+npm run test:e2e   # Playwright against a production build: console, keyboard, scrolling, links, repo strip
 ```
 
 - **Unit tests** (`src/scripts/shell-core.test.ts`) cover every command, path handling and tab completion. The shell engine in `shell-core.ts` has no DOM access, so these run in plain Node.

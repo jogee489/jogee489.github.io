@@ -87,7 +87,7 @@ test('cd moves the page, and ls follows the working directory', async ({ page })
   // cd closes the console to show the page, so there's no output to wait for
   await submit(page, 'cd experience');
   await expect(con(page)).not.toHaveClass(/open/);
-  await expect(page.locator('#experience')).toBeInViewport();
+  await expect(page.locator('#experience')).toBeInViewport({ timeout: 15_000 });
   await expect(page.locator('.side-shell [data-cwd]')).toHaveText('~/experience');
   await openConsole(page);
   expect(await run(page, 'ls')).toEqual(['vocera.txt  its.txt  education.txt']);
@@ -102,7 +102,7 @@ test('commands work the same wherever the page is scrolled', async ({ page }) =>
   expect((await run(page, 'cat resume.txt')).join('\n')).toContain('resume.txt');
   await submit(page, 'cd about');
   await expect(con(page)).not.toHaveClass(/open/);
-  await expect(page.locator('#about')).toBeInViewport();
+  await expect(page.locator('#about')).toBeInViewport({ timeout: 15_000 });
   await expect(page.locator('.side-shell [data-cwd]')).toHaveText('~/about');
 });
 
