@@ -1,5 +1,10 @@
 # TODO
 
+## Phone
+- [ ] Test the site on real phones (iOS Safari, Android Chrome): the desk intro, tapping the monitor, the full-screen shell and its command buttons
+- [ ] Update the phone layout based on what testing turns up
+- [ ] Add a phone-size, touch-enabled run (390×844) to the Playwright suite
+
 ## Desk scene
 - [ ] Model the desk in Blender with baked lighting to replace the primitive shapes in `src/scripts/desk.ts` (better look, cheaper to render)
 

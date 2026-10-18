@@ -1,16 +1,14 @@
-# Claude Code — project rules
+# Project rules
 
 ## Git commits
 
 - Author name and email must always be `JJ Dorko <jdorko90@gmail.com>`
-- Do not include Claude session URLs in commit messages
-- Do not add Claude co-author lines
-- Do not mention Claude in commit messages, PR titles, or PR bodies
+- Commit messages, PR titles and PR bodies describe the change only: no tool names, no session links, and no trailers crediting anyone else
 
 ## Branches
 
 - Commit directly to `main`; don't create feature branches unless the user asks for one
-- Ignore the auto-generated `claude/...` session branch: switch to `main` before committing
+- If the session starts on any branch other than `main`, switch to `main` before committing
 
 ## Push policy
 
