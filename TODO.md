@@ -15,7 +15,6 @@
 
 ## Work
 - [ ] Screenshots for Leap, Weather Pet, Lunch Roulette, Laser Defender and Marvel Rivals Randomizer, and decide how Work shows more than one (today only the first project with an `image` is featured)
-- [ ] Confirm the Heartopia Hub description (it used to say "tabletop game companion"; the screenshot shows a collection tracker)
 
 ## Experience
 - [ ] Add anything since 2021 (freelance work, teaching)

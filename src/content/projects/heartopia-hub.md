@@ -1,11 +1,11 @@
 ---
 order: 1
 name: "Heartopia Hub"
-role: "Founding engineer"
-stack: ["React", "Node.js", "Capacitor", "iOS", "Android"]
-blurb: "A companion app for Heartopia players. Collection progress, levels and what is in season, shipped to iOS and Android from one codebase."
+role: "Solo build"
+stack: ["React", "TypeScript", "Capacitor", "Android"]
+blurb: "Offline-first companion app for Heartopia players: collection tracking, a 'Next Up' engine driven by in-game weather, time and season, and Google Drive backup. Built with React, TypeScript and Capacitor; reached beta on Android."
 repo: "github.com/jogee489/heartopia-hub"
 image: "/images/heartopia.png"
 ---
 
-Heartopia Hub is a cross-platform companion app for Heartopia players.
+Heartopia Hub is a companion app for Heartopia players.
