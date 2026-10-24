@@ -18,10 +18,6 @@
 - [ ] Poster image for the Sensei Connect video once the redesign is done (today it shows a plain placeholder)
 - [ ] Screenshots for Weather Pet and Marvel Rivals Randomizer
 
-## Resume
-- [ ] Pull resume content from an API endpoint instead of hardcoding in `src/scripts/shell.ts`
-
 ## Ideas / Bigger lifts
 - [ ] Embed live demos for Capacitor/Flutter apps (Heartopia Hub, Weather Pet) via iframe
 - [ ] Embed LunchRoulette via appetize.io APK stream for in-browser Android emulation
-- [ ] Resume sync: GitHub Action that checks Google Doc modifiedTime and triggers redeploy when updated

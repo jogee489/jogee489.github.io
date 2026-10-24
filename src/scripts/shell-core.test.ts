@@ -310,7 +310,7 @@ describe('other commands', () => {
 
   it('prints the résumé and opens the full one', () => {
     const { run, actions } = setup();
-    expect(run('resume')).toEqual(['RESUME TEXT', '→ opening full résumé in Google Docs …']);
+    expect(run('resume')).toEqual(['RESUME TEXT', '', '→ opening the résumé (PDF) …']);
     expect(actions.open).toHaveBeenCalledWith(RESUME_URL);
   });
 
@@ -320,7 +320,17 @@ describe('other commands', () => {
   });
 
   it('formats skills from the data file', () => {
-    expect(setup().run('skills')).toEqual(['backend        Rails, Java']);
+    expect(setup().run('skills')).toEqual(['backend   Rails, Java']);
+  });
+
+  it('lines skill groups up behind the longest label', () => {
+    const skills = [{ label: 'Languages', items: ['Ruby'] }, { label: 'Cloud & Infrastructure', items: ['AWS (EC2, S3)'] }];
+    const sh = createShell({ root: dir({}), projects: [], skills, resume: [], resumeUrl: '', actions: {} as Actions });
+    sh.run('skills');
+    expect(sh.lines.slice(-2).map(l => l.s)).toEqual([
+      'languages                Ruby',
+      'cloud & infrastructure   AWS (EC2, S3)',
+    ]);
   });
 
   it('walks history with the arrow keys', () => {

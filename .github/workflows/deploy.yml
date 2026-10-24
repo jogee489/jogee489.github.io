@@ -3,6 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Daily, so edits to the résumé Google Doc reach the site. It only rebuilds when the doc has
+  # changed; "Run workflow" rebuilds right away.
+  schedule:
+    - cron: '47 20 * * *'
   workflow_dispatch:
 
 permissions:
@@ -15,8 +19,40 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  # Scheduled runs only: a quick look at whether the résumé changed since the last deploy
+  check:
+    if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    outputs:
+      changed: ${{ steps.resume.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+      - name: Has the résumé changed?
+        id: resume
+        run: node scripts/resume.ts --check
+      # GitHub switches off scheduled workflows in a public repo after 60 days with no activity.
+      # Re-enabling the workflow through the API is how keep-alive tools stop that.
+      - name: Keep the daily run switched on
+        run: gh api --method PUT "repos/${{ github.repository }}/actions/workflows/deploy.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  build:
+    needs: check
+    # After a push or "Run workflow", always; on the schedule, only when the résumé changed
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || needs.check.outputs.changed != 'false') }}
+    runs-on: ubuntu-latest
+    outputs:
+      resume_problem: ${{ steps.build.outputs.problem }}
+      resume_notice: ${{ steps.build.outputs.notice }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,14 +63,17 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      # The résumé script's tests, the build (which prints the résumé PDF) and the end-to-end
+      # tests all use it
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
       - name: Unit tests
         run: npm test
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Build with Astro
+        id: build
         run: npm run build
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
       # Runs against the build above; a failure here stops the deploy
       - name: End-to-end tests
         run: npm run test:e2e
@@ -57,8 +96,28 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     needs: build
+    # Without this, a skipped check job (every push) would skip the deploy too
+    if: ${{ !cancelled() && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # The site still went out. This turns the run red with the reason, so GitHub emails you: either
+  # the résumé couldn't be refreshed and the old copy was kept, or it was, with something to fix.
+  resume-check:
+    name: Résumé check
+    needs: [build, deploy]
+    if: ${{ !cancelled() && (needs.build.outputs.resume_problem != '' || needs.build.outputs.resume_notice != '') }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Report what needs fixing
+        run: |
+          [ -n "$PROBLEM" ] && echo "::error title=Résumé not updated::$PROBLEM"
+          [ -n "$NOTICE" ] && echo "::error title=Résumé published, but needs a fix::$NOTICE"
+          exit 1
+        env:
+          PROBLEM: ${{ needs.build.outputs.resume_problem }}
+          NOTICE: ${{ needs.build.outputs.resume_notice }}

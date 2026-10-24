@@ -223,11 +223,12 @@ export function createShell(cfg: ShellConfig) {
         out('/home/jj' + shell.cwd.slice(1));
         break;
       case 'resume':
-        out(...cfg.resume, '→ opening full résumé in Google Docs …');
+        out(...cfg.resume, '', '→ opening the résumé (PDF) …');
         cfg.actions.open(cfg.resumeUrl);
         break;
       case 'skills':
-        cfg.skills.forEach(g => out(`${g.label.toLowerCase().padEnd(15)}${g.items.join(', ')}`));
+        const w = Math.max(...cfg.skills.map(g => g.label.length)) + 3;
+        cfg.skills.forEach(g => out(`${g.label.toLowerCase().padEnd(w)}${g.items.join(', ')}`));
         break;
       case 'contact':
         out(`linkedin  ${bare(LINKEDIN_URL)}`, `github    ${bare(GITHUB_URL)}`, "form      'cd contact'");

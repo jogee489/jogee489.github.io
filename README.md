@@ -27,12 +27,14 @@ npm run preview    # preview the production build locally
 ## Testing
 
 ```sh
-npm test           # unit tests for the shell's commands (Vitest, well under a second)
-npm run test:e2e   # Playwright against a production build: console, keyboard, scrolling, links, repo strip
+npm test           # Vitest: the shell, the résumé formatting and checks, and the résumé script (about 10 seconds)
+npm run test:e2e   # Playwright against a production build: console, keyboard, scrolling, links, repo strip, résumé, video
 ```
 
-- **Unit tests** (`src/scripts/shell-core.test.ts`) cover every command, path handling and tab completion. The shell engine in `shell-core.ts` has no DOM access, so these run in plain Node.
-- **End-to-end tests** (`tests/e2e/`) cover the wiring the unit tests can't see. GitHub and Google Fonts are stubbed, so they run offline. On a new machine, run `npx playwright install chromium` once first.
+- **Unit tests** cover every shell command, path handling and tab completion (`src/scripts/shell-core.test.ts`), how the résumé is read, formatted and checked for phone numbers (`src/scripts/resume-format.test.ts`), and project links (`src/data/projects.test.ts`).
+- **Script tests** (`scripts/*.test.ts`) run `scripts/resume.ts` for real in a temporary folder, with a local server standing in for jjdorko.com: a clean doc, a doc it must refuse, no copy to fall back to, a changed page setup, offline builds and the daily change check.
+- **End-to-end tests** (`tests/e2e/`) cover the wiring the unit tests can't see. GitHub, YouTube and Google Fonts are stubbed and the résumé comes from `tests/fixtures/resume-export.html`, so they run offline.
+- The script and end-to-end tests need Playwright's Chromium: on a new machine, run `npx playwright install chromium` once.
 
 ## Project structure
 
@@ -80,6 +82,18 @@ public/
    ```
 2. That's it. The project shows up in Work and in the shell (`ls projects`, `cat <slug>`, `open <slug>`).
 
+## Résumé
+
+`scripts/resume.ts` runs before every build. It downloads the résumé Google Doc and writes `public/resume.pdf` (US Letter, titled "JJ Dorko – Résumé") and the text the shell uses for `resume.txt` and `skills`.
+
+- **What it won't publish:** a doc with a phone number in it (including behind a tel: or WhatsApp link), or a page that isn't the résumé (Google shows a sign-in page if the doc stops being shared). The doc is shared with anyone who has the link, so keep anything private out of it.
+- **When something's wrong:** it keeps the copy already on jjdorko.com, the deploy still goes out, and the run's last job, "Résumé check", fails with the reason, so GitHub emails you. It also fails, after publishing the new copy, when the doc's page setup or skills format changed and the script needs updating.
+- **Format it relies on:** section titles are bold, all-caps paragraphs, and skills are "Label: a, b, c" lines under TECHNICAL SKILLS.
+- **Locally:** `npm run dev` reuses the last copy if it came from the doc; `npm run resume` refreshes it. Offline, the build writes a placeholder. The end-to-end tests build from `tests/fixtures/resume-export.html`, and `RESUME_HTML=<file> npm run resume` does the same by hand.
+
 ## Deployment
 
-Pushes to `main` automatically trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`), which builds with Node 26 and deploys to GitHub Pages.
+`.github/workflows/deploy.yml` runs on every push to `main`, daily, and from "Run workflow" on GitHub. It builds with Node 26, runs the unit and end-to-end tests, and deploys to GitHub Pages.
+
+- **Daily runs** first check whether the résumé doc changed, and only rebuild if it did. They also re-enable the workflow through GitHub's API, because GitHub switches off scheduled workflows in a public repo after 60 days without activity.
+- **Résumé check** is the last job. It fails, and GitHub emails you, when the résumé couldn't be refreshed; the site still deploys with the copy it had.

@@ -27,6 +27,8 @@ export default defineConfig({
   // Tests run against the production build, not the dev server. CI has already built it.
   webServer: {
     command: `${process.env.CI ? '' : 'npm run build && '}npm run preview -- --host 127.0.0.1 --port ${PORT}`,
+    // Locally, build the résumé from the saved export so runs don't depend on Google
+    env: process.env.CI ? {} : { RESUME_HTML: 'tests/fixtures/resume-export.html' },
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

@@ -23,6 +23,11 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# made by scripts/resume.ts on every build
+public/resume.pdf
+public/resume.json
+src/generated/
+
 # test output
 test-results/
 playwright-report/

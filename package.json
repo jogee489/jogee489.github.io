@@ -6,12 +6,13 @@
     "node": ">=26.0.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "node scripts/resume.ts --if-missing && astro dev",
+    "build": "node scripts/resume.ts && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "resume": "node scripts/resume.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",

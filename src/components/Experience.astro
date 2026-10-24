@@ -1,5 +1,5 @@
 ---
-import { RESUME_URL } from '../data/links';
+import { RESUME_FILE, RESUME_URL } from '../data/links';
 ---
 
 <section id="experience">
@@ -80,6 +80,7 @@ import { RESUME_URL } from '../data/links';
   <p class="creds" data-file="education.txt">
     B.S. Computer Science, Purdue University Fort Wayne (then IPFW), 2017. JLPT N5, 2024. Certified ScrumMaster and
     Certified SAFe 5 Practitioner, both earned in 2021 and no longer active.
-    <a href={RESUME_URL} target="_blank" rel="noreferrer">Full résumé <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+    <a href={RESUME_URL} target="_blank" rel="noreferrer">Résumé (PDF) <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+    <a href={RESUME_URL} download={RESUME_FILE}>Download</a>
   </p>
 </section>

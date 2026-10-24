@@ -1,6 +1,7 @@
 // End-to-end checks for the parts the unit tests can't see: keyboard shortcuts, the
 // full-screen console, scrolling, and the monitor and console sharing one shell.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { con, openConsole, run, submit } from './console';
 
 const REPOS = [
   { name: 'rails-chat', full_name: 'jogee489/rails-chat', html_url: 'https://github.com/jogee489/rails-chat', fork: false, default_branch: 'main' },
@@ -21,30 +22,6 @@ test.beforeEach(async ({ page }) => {
   });
   await page.goto('/');
 });
-
-const con = (page: Page) => page.locator('#console');
-
-async function openConsole(page: Page) {
-  await page.keyboard.press('Backquote');
-  await expect(con(page)).toHaveClass(/open/);
-  await expect(page.locator('#console-input')).toBeFocused();
-}
-
-async function submit(page: Page, cmd: string) {
-  await page.locator('#console-input').fill(cmd);
-  await page.locator('#console-input').press('Enter');
-}
-
-/** runs a command in the console and returns the lines it printed */
-async function run(page: Page, cmd: string) {
-  const lines = page.locator('#console-out .ln');
-  const prompts = page.locator('#console-out .ln.in');
-  const before = await lines.count();
-  const n = await prompts.count();
-  await submit(page, cmd);
-  await expect(prompts).toHaveCount(n + 1);
-  return (await lines.allTextContents()).slice(before + 1).map(s => s.replace(/ /g, ''));
-}
 
 test('backtick opens the full-screen shell from the desk, and Esc closes it', async ({ page }) => {
   await openConsole(page);
@@ -125,7 +102,7 @@ test('open and resume launch the right links', async ({ page }) => {
   expect(await page.evaluate(() => (window as typeof window & { opened: string[] }).opened)).toEqual([
     'https://www.youtube.com/watch?v=ZxlBJATvUNM',
     'https://www.linkedin.com/in/jjdorko',
-    'https://docs.google.com/document/d/1FB6sleJ1ML4Hoe_g6wiSWh8CZVqXwje7lVZqr0MkE-M/edit?usp=sharing',
+    '/resume.pdf',
   ]);
 });
 

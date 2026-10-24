@@ -2,6 +2,7 @@
 // and the same shell drives the monitor in the desk scene and the full-screen console.
 import { GITHUB_URL, LINKEDIN_URL, RESUME_URL, bare } from '../data/links';
 import { SKILL_GROUPS } from '../data/skills';
+import generated from '../generated/resume.json';
 import { createShell, dir, file, projectsDir, type FsNode, type Project } from './shell-core';
 
 type DeskApi = {
@@ -17,76 +18,8 @@ const coarse = matchMedia('(pointer: coarse)').matches;
 
 const PROJECTS: Project[] = JSON.parse(document.getElementById('shell-data')?.textContent || '[]');
 
-// TODO: fetch resume content from an endpoint instead of hardcoding
-const RESUME = [
-  '┌─────────────────────────────────────────────────────┐',
-  '│  joseph (jj) dorko — resume.txt                     │',
-  '└─────────────────────────────────────────────────────┘',
-  '',
-  `  ${bare(GITHUB_URL)} · ${bare(LINKEDIN_URL)}`,
-  '',
-  '── GOAL ──────────────────────────────────────────────',
-  '',
-  '  Technology has always been a passion. Every piece of',
-  '  software is intended to make life easier. Learning',
-  '  new things and helping people drive me to keep',
-  '  innovating.',
-  '',
-  '── SKILLS ────────────────────────────────────────────',
-  '',
-  '  linux (rhel · bash · scripting)  ruby on rails  java',
-  '  postgresql  python  javascript/jquery',
-  '  agile · scrum · safe',
-  '',
-  '── EXPERIENCE ────────────────────────────────────────',
-  '',
-  '  Vocera Communications / Extension Healthcare',
-  '  ├─ Platform Dev II + Scrum Master   04/2018–12/2021',
-  '  ├─ Platform Developer I              12/2016–04/2018',
-  '  └─ Junior Platform Dev (intern)      11/2014–12/2016',
-  '',
-  '    · International team, customer escalation lead',
-  '    · Ran scrum ceremonies, mentored new hires',
-  '    · RedHat Linux: Apache, systemd, Glassfish',
-  '    · Backend APIs — Ruby on Rails + PostgreSQL',
-  '    · Device integration via XMPP + Java',
-  '    · Frontend: AngularJS, JavaScript, HTML',
-  '',
-  '  Information Technology Services',
-  '  └─ Web App Developer (intern)        05/2013–11/2014',
-  '',
-  '    · Web pages + DB tables in Groovy / Grails',
-  '    · Direct client communication',
-  '',
-  '── KEY ACCOMPLISHMENTS ───────────────────────────────',
-  '',
-  '  High Availability   dual-node failover via keepalived',
-  '  OpenMQ              reliable msg delivery in Glassfish',
-  '  Event Templates     reusable event msgs for hospital staff',
-  '  Import/Export       CSV-based data migration tooling',
-  '  Alias Attributes    backwards-compat for data model changes',
-  '  Scoped Security     facility-level admin permission scoping',
-  '  Context in Calls    call/voicemail context in patient threads',
-  '  Scalable Groups     efficient group membership calculations',
-  '  Background Tasks    throttled processing for heavy operations',
-  '  Onboarding Plans    intern + new-hire training program',
-  '',
-  '── EDUCATION ─────────────────────────────────────────',
-  '',
-  '  IPFW University · B.S. Computer Science · Dec 2017',
-  '',
-  '── CERTIFICATIONS ────────────────────────────────────',
-  '',
-  '  Certified Scrum Master',
-  '  Certified SAFe 5 Practitioner',
-  '',
-  '── SIDE PROJECTS ─────────────────────────────────────',
-  '',
-  '  LaserDefender     Unity + C#',
-  '  Werewolf app      MEAN stack',
-  '  LunchRoulette     Kotlin / Android',
-  '  Chaos Controller  Arduino',
-];
+// resume.txt and the skills list come from the résumé Google Doc on every build; see scripts/resume.ts
+const RESUME = generated.lines;
 
 // ── the filesystem is the page's own content ────────────
 const text = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
@@ -132,7 +65,7 @@ const root = dir({
 const core = createShell({
   root,
   projects: PROJECTS,
-  skills: SKILL_GROUPS,
+  skills: generated.skills.length ? generated.skills : SKILL_GROUPS,
   resume: RESUME,
   resumeUrl: RESUME_URL,
   actions: {
