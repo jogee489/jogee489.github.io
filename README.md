@@ -82,4 +82,4 @@ public/
 
 ## Deployment
 
-Pushes to `main` automatically trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`), which builds with Node 24 and deploys to GitHub Pages.
+Pushes to `main` automatically trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`), which builds with Node 26 and deploys to GitHub Pages.
