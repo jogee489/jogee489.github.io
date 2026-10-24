@@ -3,16 +3,12 @@
 // what any résumé must have rather than its wording.
 import { expect, test } from '@playwright/test';
 import { findPhone } from '../../src/scripts/resume-format';
-import { openConsole, run } from './console';
+import { opened, openConsole, recordOpens, run } from './console';
 
 test.beforeEach(async ({ page }) => {
   await page.route('https://api.github.com/**', route => route.fulfill({ json: [] }));
   await page.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
-  await page.addInitScript(() => {
-    const w = window as typeof window & { opened: string[] };
-    w.opened = [];
-    w.open = ((url: string) => { w.opened.push(url); return null; }) as typeof window.open;
-  });
+  await recordOpens(page);
   await page.goto('/');
 });
 
@@ -49,7 +45,7 @@ test('resume prints the résumé and opens the PDF', async ({ page }) => {
   const out = await run(page, 'resume');
   expect(out[1]).toMatch(/— resume\.txt/);
   expect(out.at(-1)).toBe('→ opening the résumé (PDF) …');
-  expect(await page.evaluate(() => (window as typeof window & { opened: string[] }).opened)).toEqual(['/resume.pdf']);
+  expect(await opened(page)).toEqual(['/resume.pdf']);
 });
 
 test('skills lists the groups from the résumé, lined up', async ({ page }) => {

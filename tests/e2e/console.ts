@@ -14,13 +14,27 @@ export async function submit(page: Page, cmd: string) {
   await page.locator('#console-input').press('Enter');
 }
 
-/** runs a command in the console and returns the lines it printed */
-export async function run(page: Page, cmd: string) {
+/** does something that runs one command (typing it, or clicking a button) and returns the lines it printed */
+export async function printed(page: Page, action: () => Promise<unknown>) {
   const lines = page.locator('#console-out .ln');
   const prompts = page.locator('#console-out .ln.in');
   const before = await lines.count();
   const n = await prompts.count();
-  await submit(page, cmd);
+  await action();
   await expect(prompts).toHaveCount(n + 1);
   return (await lines.allTextContents()).slice(before + 1).map(s => s.replace(/ /g, ''));
 }
+
+/** records window.open calls instead of opening tabs; call before page.goto */
+export const recordOpens = (page: Page) =>
+  page.addInitScript(() => {
+    const w = window as typeof window & { opened: string[] };
+    w.opened = [];
+    w.open = ((url: string) => { w.opened.push(url); return null; }) as typeof window.open;
+  });
+
+/** the links opened so far */
+export const opened = (page: Page) => page.evaluate(() => (window as typeof window & { opened: string[] }).opened);
+
+/** runs a command in the console and returns the lines it printed */
+export const run = (page: Page, cmd: string) => printed(page, () => submit(page, cmd));

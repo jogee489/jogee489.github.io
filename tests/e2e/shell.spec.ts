@@ -1,7 +1,7 @@
 // End-to-end checks for the parts the unit tests can't see: keyboard shortcuts, the
 // full-screen console, scrolling, and the monitor and console sharing one shell.
 import { expect, test } from '@playwright/test';
-import { con, openConsole, run, submit } from './console';
+import { con, opened, openConsole, printed, recordOpens, run, submit } from './console';
 
 const REPOS = [
   { name: 'rails-chat', full_name: 'jogee489/rails-chat', html_url: 'https://github.com/jogee489/rails-chat', fork: false, default_branch: 'main' },
@@ -15,11 +15,7 @@ test.beforeEach(async ({ page }) => {
   await page.route('https://raw.githubusercontent.com/**', route => route.fulfill({ status: 404 }));
   await page.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
   // Record links instead of opening tabs
-  await page.addInitScript(() => {
-    const w = window as typeof window & { opened: string[] };
-    w.opened = [];
-    w.open = ((url: string) => { w.opened.push(url); return null; }) as typeof window.open;
-  });
+  await recordOpens(page);
   await page.goto('/');
 });
 
@@ -94,22 +90,35 @@ test('typing on the desk goes to the monitor, and the console shares its history
   await expect(page.locator('#console-out .ln.in').last()).toHaveText('jj@dorko:~$ whoami');
 });
 
-test('open and resume launch the right links', async ({ page }) => {
+test('open and resume each say what they open, and open it', async ({ page }) => {
   await openConsole(page);
-  await run(page, 'open sensei-connect');
-  await run(page, 'open contact/linkedin');
-  await run(page, 'resume');
-  expect(await page.evaluate(() => (window as typeof window & { opened: string[] }).opened)).toEqual([
-    'https://www.youtube.com/watch?v=ZxlBJATvUNM',
-    'https://www.linkedin.com/in/jjdorko',
-    '/resume.pdf',
-  ]);
+  const last = async () => (await opened(page)).at(-1);
+  expect(await run(page, 'open sensei-connect')).toEqual(['Opening youtube.com/watch?v=ZxlBJATvUNM']);
+  expect(await last()).toBe('https://www.youtube.com/watch?v=ZxlBJATvUNM');
+  expect(await run(page, 'open contact/linkedin')).toEqual(['Opening linkedin.com/in/jjdorko']);
+  expect(await last()).toBe('https://www.linkedin.com/in/jjdorko');
+  expect((await run(page, 'resume')).at(-1)).toBe('→ opening the résumé (PDF) …');
+  expect(await last()).toBe('/resume.pdf');
 });
 
-test('the command buttons, Close and exit work', async ({ page }) => {
+test('each command button runs its command', async ({ page }) => {
   await openConsole(page);
-  await page.getByRole('button', { name: 'whoami', exact: true }).click();
-  await expect(page.locator('#console-out')).toContainText('Software engineer in Osaka. Seven years of Rails, Java and Linux at Vocera,');
+  const button = (name: string) => page.getByRole('button', { name, exact: true });
+  const press = (name: string) => printed(page, () => button(name).click());
+  expect((await press('help'))[0]).toMatch(/^whoami\s+who this is$/);
+  expect(await press('whoami')).toContain('Software engineer in Osaka. Seven years of Rails, Java and Linux at Vocera,');
+  expect((await press('ls projects')).join('\n')).toMatch(/^sensei-connect\s+Next\.js/);
+  expect((await press('resume')).at(-1)).toBe('→ opening the résumé (PDF) …');
+  expect(await press('lamp')).toEqual(['lamp: off. The monitor is enough light anyway.']);
+  // cd closes the console and moves the page instead of printing
+  await button('cd work').click();
+  await expect(con(page)).not.toHaveClass(/open/);
+  await expect(page.locator('#work')).toBeInViewport({ timeout: 15_000 });
+  await expect(page.locator('.side-shell [data-cwd]')).toHaveText('~/work');
+});
+
+test('Close and exit both close the console', async ({ page }) => {
+  await openConsole(page);
   await page.locator('#console-close').click();
   await expect(con(page)).not.toHaveClass(/open/);
   await openConsole(page);

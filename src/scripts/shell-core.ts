@@ -38,7 +38,7 @@ export const dir = (
   extra: Partial<Omit<DirNode, 'kind' | 'entries'>> = {},
 ): DirNode => ({ kind: 'dir', entries: typeof entries === 'function' ? entries : () => entries, ...extra });
 
-const projectLines = (p: Project) => [p.name, p.stack, '', p.blurb, '', p.url.replace(/^https?:\/\//, '')];
+const projectLines = (p: Project) => [p.name, p.stack, '', p.blurb, '', bare(p.url)];
 export const projectsDir = (projects: Project[]) =>
   dir(Object.fromEntries(projects.map(p => [p.id, file(() => projectLines(p), { url: p.url, note: p.stack })])));
 
@@ -180,7 +180,7 @@ export function createShell(cfg: ShellConfig) {
     if (node?.kind === 'dir') return out(`open: ${arg}: Is a directory`);
     const url = node ? node.url : findProject(arg)?.url;
     if (!url) return out(`open: ${arg}: ${node ? 'has no link to open' : 'No such file or directory'}`);
-    out(`Opening ${url.replace(/^https?:\/\//, '')}`);
+    out(`Opening ${bare(url)}`);
     cfg.actions.open(url);
   }
 

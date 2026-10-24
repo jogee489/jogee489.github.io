@@ -172,7 +172,7 @@ describe('cat', () => {
     expect(run('cat heartopia-hub')).toEqual(['Heartopia Hub', 'React, Capacitor', '', 'Companion app.', '', 'github.com/jogee489/heartopia-hub']);
     expect(run('cat weather pet')[0]).toBe('Weather Pet');
     // a private repo shows where its demo is instead
-    expect(run('cat sensei-connect').at(-1)).toBe('www.youtube.com/watch?v=ZxlBJATvUNM');
+    expect(run('cat sensei-connect').at(-1)).toBe('youtube.com/watch?v=ZxlBJATvUNM');
   });
 
   it('explains directories, missing files and a missing name', () => {
@@ -228,7 +228,7 @@ describe('open', () => {
 
   it('opens the demo video for a project with a private repo', () => {
     const { run, actions } = setup();
-    expect(run('open sensei-connect')).toEqual(['Opening www.youtube.com/watch?v=ZxlBJATvUNM']);
+    expect(run('open sensei-connect')).toEqual(['Opening youtube.com/watch?v=ZxlBJATvUNM']);
     expect(actions.open).toHaveBeenCalledWith('https://www.youtube.com/watch?v=ZxlBJATvUNM');
   });
 
@@ -403,9 +403,33 @@ describe('tab completion', () => {
   });
 
   it('offers project names to cat and open from anywhere', () => {
-    const { sh, printed } = setup();
+    const { sh, run } = setup();
+    run('cd about');
     expect(sh.complete('open sen')).toBe('open sensei-connect');
     expect(sh.complete('cat m')).toBe('cat marvel-rivals-randomizer');
     expect(sh.complete('open h')).toBe('open heartopia-hub');
+  });
+
+  it('extends to what several matches share, then lists them', () => {
+    const { sh, printed } = setup();
+    const before = sh.lines.length;
+    expect(sh.complete('ls r')).toBe('ls re');
+    expect(sh.lines.length).toBe(before);
+    expect(sh.complete('ls re')).toBe('ls re');
+    expect(printed()).toBe('repos/  resume.txt');
+  });
+
+  it('lists a directory and a project that start the same way', () => {
+    const { sh, printed } = setup();
+    expect(sh.complete('cat w')).toBe('cat w');
+    expect(printed()).toBe('work/  weather-pet');
+  });
+
+  it('lists everything in a directory, and only directories for cd', () => {
+    const { sh, printed } = setup();
+    expect(sh.complete('open work/')).toBe('open work/');
+    expect(printed()).toBe('sensei-connect  heartopia-hub  weather-pet  marvel-rivals-randomizer');
+    sh.complete('cd ');
+    expect(printed()).toBe('about/  experience/  work/  repos/  contact/');
   });
 });

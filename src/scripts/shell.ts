@@ -43,7 +43,7 @@ function jobLines(job: Element) {
 let repos: Record<string, FsNode> = {};
 window.addEventListener('repos:loaded', e => {
   const list = (e as CustomEvent<{ name: string; url: string }[]>).detail;
-  repos = Object.fromEntries(list.map(r => [r.name, file(() => [r.name, r.url.replace('https://', '')], { url: r.url })]));
+  repos = Object.fromEntries(list.map(r => [r.name, file(() => [r.name, bare(r.url)], { url: r.url })]));
 });
 
 const root = dir({
