@@ -6,12 +6,52 @@ import { RESUME_URL } from '../data/links';
   <h2 class="sec-h">Experience</h2>
   <ol class="jobs">
     {/* data-file names each entry in the shell's ~/experience */}
+    <li class="job" data-file="metech.txt">
+      <p class="job-when">2026</p>
+      <div>
+        <h3>COO and Technical Lead <span>· ME Tech</span></h3>
+        <p class="job-desc">
+          Five-person software contracting company in Japan. Set coding standards, code review and security
+          requirements, managed two engineers, onboarded three, and ran planning with the CEO.
+        </p>
+        <ul class="job-wins">
+          <li>Solo Rails 4.2 to Rails 7.1 upgrade of a school platform used by two schools and about 800 students, backed by 8,000+ unit tests built with Claude Code and reviewed one by one</li>
+          <li>A second Rails backend upgraded, with 500+ new tests</li>
+          <li>About 40% faster photo loading and about 15% faster pages</li>
+          <li>School onboarding 25% shorter; accidental organization sign-ups cut from about 3 a month to zero</li>
+          <li>GitHub Actions CI/CD and Capistrano deploys to AWS EC2 and S3</li>
+        </ul>
+        <p class="job-tech">Ruby on Rails, Vue.js, TypeScript, Python, PostgreSQL, AWS, Stripe, Claude Code</p>
+      </div>
+    </li>
+    <li class="job" data-file="teaching.txt">
+      <p class="job-when">2024 – now</p>
+      <div>
+        <h3>English Teacher <span>· Osaka</span></h3>
+        <p class="job-desc">
+          One-on-one and group lessons for students aged 1 to 65 at Dorothy EQ Plaza, Little Stars English and
+          Mac's English School (as a substitute), plus private students. Custom lesson plans, including
+          CLIL-based lessons and business English.
+        </p>
+      </div>
+    </li>
+    <li class="job" data-file="independent.txt">
+      <p class="job-when">2022 – 2025</p>
+      <div>
+        <h3>Independent Developer <span>· Remote</span></h3>
+        <p class="job-desc">
+          Remote work while traveling: development, QA and project management on Echoes of Undeath, a two-person
+          Unity game now in Early Access on Steam. Also the Dorothy EQ Plaza website, and planning help for small teams.
+        </p>
+        <p class="job-tech">Unity, C#, HTML, CSS, JavaScript</p>
+      </div>
+    </li>
     <li class="job" data-file="vocera.txt">
       <p class="job-when">2014 – 2021</p>
       <div>
         <h3>Platform Developer II and Scrum Master <span>· Vocera Communications</span></h3>
         <p class="job-prev">
-          Previously Platform Developer I (2016 – 2018) and Junior Platform Developer (2014 – 2016), Extension Healthcare
+          Previously Platform Developer I (2016 – 2018) and Junior Platform Developer, part-time (2014 – 2016), Extension Healthcare
         </p>
         <p class="job-desc">
           Backend for a platform that routes alerts, calls and messages to hospital staff. Rails and PostgreSQL
@@ -19,9 +59,9 @@ import { RESUME_URL } from '../data/links';
           international team, led customer escalations and mentored new hires.
         </p>
         <ul class="job-wins">
+          <li>A hot PostgreSQL query rewritten to run 70% faster, speeding up logins and chat at shift change</li>
           <li>Dual-node failover with keepalived</li>
           <li>Reliable message delivery on OpenMQ inside Glassfish</li>
-          <li>Admin permissions scoped per facility</li>
           <li>Throttled background processing for heavy jobs</li>
           <li>The onboarding plan for interns and new hires</li>
         </ul>
@@ -31,14 +71,15 @@ import { RESUME_URL } from '../data/links';
     <li class="job" data-file="its.txt">
       <p class="job-when">2013 – 2014</p>
       <div>
-        <h3>Web Application Developer, intern <span>· Information Technology Services</span></h3>
+        <h3>Web Application Developer, part-time student worker <span>· IT Services, IPFW</span></h3>
         <p class="job-desc">Built web pages and database tables in Groovy and Grails, working directly with the people who asked for them.</p>
         <p class="job-tech">Groovy, Grails</p>
       </div>
     </li>
   </ol>
   <p class="creds" data-file="education.txt">
-    B.S. Computer Science, IPFW, 2017. Certified ScrumMaster. Certified SAFe 5 Practitioner.
+    B.S. Computer Science, Purdue University Fort Wayne (then IPFW), 2017. JLPT N5, 2024. Certified ScrumMaster and
+    Certified SAFe 5 Practitioner, both earned in 2021 and no longer active.
     <a href={RESUME_URL} target="_blank" rel="noreferrer">Full résumé <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg></a>
   </p>
 </section>

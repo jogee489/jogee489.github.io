@@ -200,7 +200,12 @@ export function createShell(cfg: ShellConfig) {
         out(...HELP);
         break;
       case 'whoami':
-        out('JJ Dorko', 'Backend engineer. Rails, Java and Linux for over ten years.', 'Freelancing now. Teaches English to students aged 5 to 65.');
+        out(
+          'JJ Dorko',
+          'Software engineer in Osaka. Seven years of Rails, Java and Linux at Vocera,',
+          'then COO and technical lead at a contracting company in Japan.',
+          'Teaches English to students aged 1 to 65.',
+        );
         break;
       case 'ls':
         ls(arg);
@@ -314,7 +319,7 @@ export function createShell(cfg: ShellConfig) {
 
   lines.push({ t: 'sys', s: `Last login: ${now().toDateString()} on ttys001` });
   echo('whoami');
-  out('JJ Dorko. Backend engineer: Rails, Java, Linux. Available for freelance work.');
+  out('JJ Dorko. Software engineer in Osaka. Open to full-time roles and contract work.');
   echo('ls');
   ls('');
   lines.push({ t: 'sys', s: "Type 'help' to see what else this shell can do." });

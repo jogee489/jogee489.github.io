@@ -1,14 +1,14 @@
 ---
+import { SITE_DESCRIPTION } from '../consts';
 import Layout from '../layouts/BlogPost.astro';
 ---
 
 <Layout
 	title="About Me"
-	description="Senior Software Engineer with 10+ years experience in backend and cross-platform development."
+	description={SITE_DESCRIPTION}
 	pubDate={new Date('May 15 2026')}
 >
 	<p>
-		Senior Software Engineer with 10+ years experience in backend and cross-platform development.
-		Teaching English and developing a myriad of apps.
+		{SITE_DESCRIPTION} I also teach English in Osaka, to students aged 1 to 65.
 	</p>
 </Layout>

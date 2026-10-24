@@ -76,7 +76,8 @@ test('everything ls shows can be listed or printed', async ({ page }) => {
   await visit('');
   // Files come from the page itself, so these prove the page content reached the shell
   expect(visited).toEqual(expect.arrayContaining([
-    'about/about.txt', 'experience/vocera.txt', 'experience/its.txt', 'experience/education.txt',
+    'about/about.txt', 'experience/metech.txt', 'experience/teaching.txt', 'experience/independent.txt',
+    'experience/vocera.txt', 'experience/its.txt', 'experience/education.txt',
     'work/heartopia-hub', 'repos/rails-chat', 'contact/linkedin', 'resume.txt',
   ]));
   expect(await run(page, 'cat experience/vocera.txt')).toContain('Platform Developer II and Scrum Master · Vocera Communications');
@@ -90,14 +91,14 @@ test('cd moves the page, and ls follows the working directory', async ({ page })
   await expect(page.locator('#experience')).toBeInViewport({ timeout: 15_000 });
   await expect(page.locator('.side-shell [data-cwd]')).toHaveText('~/experience');
   await openConsole(page);
-  expect(await run(page, 'ls')).toEqual(['vocera.txt  its.txt  education.txt']);
+  expect(await run(page, 'ls')).toEqual(['metech.txt  teaching.txt  independent.txt  vocera.txt  its.txt  education.txt']);
 });
 
 test('commands work the same wherever the page is scrolled', async ({ page }) => {
   await page.locator('#experience').scrollIntoViewIfNeeded();
   await expect(page.locator('.side-shell [data-cwd]')).toHaveText('~/experience');
   await openConsole(page);
-  expect(await run(page, 'ls')).toEqual(['vocera.txt  its.txt  education.txt']);
+  expect(await run(page, 'ls')).toEqual(['metech.txt  teaching.txt  independent.txt  vocera.txt  its.txt  education.txt']);
   expect((await run(page, 'ls work')).join('\n')).toContain('heartopia-hub');
   expect((await run(page, 'cat resume.txt')).join('\n')).toContain('resume.txt');
   await submit(page, 'cd about');
@@ -131,7 +132,7 @@ test('open and resume launch the right links', async ({ page }) => {
 test('the command buttons, Close and exit work', async ({ page }) => {
   await openConsole(page);
   await page.getByRole('button', { name: 'whoami', exact: true }).click();
-  await expect(page.locator('#console-out')).toContainText('Backend engineer. Rails, Java and Linux for over ten years.');
+  await expect(page.locator('#console-out')).toContainText('Software engineer in Osaka. Seven years of Rails, Java and Linux at Vocera,');
   await page.locator('#console-close').click();
   await expect(con(page)).not.toHaveClass(/open/);
   await openConsole(page);

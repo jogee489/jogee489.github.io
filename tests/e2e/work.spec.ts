@@ -37,6 +37,14 @@ test('Work shows the four projects, with Sensei Connect featured', async ({ page
   await expect(page.locator('#work')).not.toContainText(/LEAP|Laser Defender|Lunch Roulette/);
 });
 
+test('the page title and link previews say Software Engineer', async ({ page }) => {
+  await visit(page);
+  await expect(page).toHaveTitle('JJ Dorko · Software Engineer');
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'JJ Dorko · Software Engineer');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /^Software engineer in Osaka\. Seven years/);
+  expect(await page.content()).not.toMatch(/backend engineer|10\+ years/i);
+});
+
 test('nothing from YouTube loads until play is pressed', async ({ page }) => {
   const requests = await visit(page);
   await page.waitForLoadState('networkidle');

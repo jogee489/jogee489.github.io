@@ -266,8 +266,9 @@ describe('other commands', () => {
     expect(run('?')).toEqual(HELP);
     expect(run('whoami')).toEqual([
       'JJ Dorko',
-      'Backend engineer. Rails, Java and Linux for over ten years.',
-      'Freelancing now. Teaches English to students aged 5 to 65.',
+      'Software engineer in Osaka. Seven years of Rails, Java and Linux at Vocera,',
+      'then COO and technical lead at a contracting company in Japan.',
+      'Teaches English to students aged 1 to 65.',
     ]);
   });
 

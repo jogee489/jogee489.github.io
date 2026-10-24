@@ -8,6 +8,7 @@ import Experience from '../components/Experience.astro';
 import Projects from '../components/Projects.astro';
 import RepoMarquee from '../components/RepoMarquee';
 import Side from '../components/Side.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { projectUrl } from '../data/projects';
 import '../styles/portfolio.css';
 
@@ -19,7 +20,6 @@ const shellProjects = projects.map(p => ({
   blurb: p.data.blurb,
   url: projectUrl(p.data),
 }));
-const description = 'Backend engineer with over ten years of Rails, Java and Linux. Available for freelance work.';
 ---
 
 <!doctype html>
@@ -31,10 +31,10 @@ const description = 'Backend engineer with over ten years of Rails, Java and Lin
     <meta name="theme-color" content="#12100d" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
-    <title>JJ Dorko · Backend Engineer</title>
-    <meta name="description" content={description} />
-    <meta property="og:title" content="JJ Dorko · Backend Engineer" />
-    <meta property="og:description" content={description} />
+    <title>{SITE_TITLE}</title>
+    <meta name="description" content={SITE_DESCRIPTION} />
+    <meta property="og:title" content={SITE_TITLE} />
+    <meta property="og:description" content={SITE_DESCRIPTION} />
     <meta property="og:type" content="website" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -72,7 +72,7 @@ const description = 'Backend engineer with over ten years of Rails, Java and Lin
         </section>
         <Contact />
         <footer class="colophon">
-          <p>Designed and built by JJ Dorko with Astro and three.js. Set in Mona Sans and Red Hat Mono.</p>
+          <p>Designed and built by JJ Dorko with Claude Code, Astro and three.js. Set in Mona Sans and Red Hat Mono.</p>
           <p>Press <kbd>`</kbd> anywhere for the full-screen shell.</p>
         </footer>
       </main>

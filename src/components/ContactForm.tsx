@@ -9,7 +9,7 @@ const STATUS_TEXT: Record<Status, string> = {
   idle: '',
   sending: 'Sending…',
   sent: "Sent. Thanks, I'll be in touch.",
-  error: "That didn't go through. Try again, or reach me on LinkedIn.",
+  error: "That didn't go through. Try again, or email me at jdorko90@gmail.com.",
 };
 
 export default function ContactForm() {

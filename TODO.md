@@ -18,9 +18,6 @@
 - [ ] Poster image for the Sensei Connect video once the redesign is done (today it shows a plain placeholder)
 - [ ] Screenshots for Weather Pet and Marvel Rivals Randomizer
 
-## Experience
-- [ ] Add anything since 2021 (freelance work, teaching)
-
 ## Resume
 - [ ] Pull resume content from an API endpoint instead of hardcoding in `src/scripts/shell.ts`
 
