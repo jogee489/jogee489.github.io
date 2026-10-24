@@ -15,21 +15,22 @@
     "resume": "node scripts/resume.ts"
   },
   "dependencies": {
-    "@astrojs/mdx": "^5.0.6",
-    "@astrojs/react": "^5.0.5",
-    "@astrojs/rss": "^4.0.18",
-    "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/mdx": "^8.1.1",
+    "@astrojs/react": "^7.1.1",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "astro": "^6.3.3",
+    "astro": "^7.4.2",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "sharp": "^0.34.3",
+    "sharp": "^0.35.5",
     "three": "^0.186.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
     "@types/three": "^0.186.0",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.12"
   }
 }

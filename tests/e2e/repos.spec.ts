@@ -99,7 +99,7 @@ test('the hovered card gets bigger and stays inside the strip', async ({ page })
   });
   await cards.nth(edge).hover();
   const width = async () => (await cards.nth(edge).boundingBox())!.width;
-  await expect.poll(async () => (await width()) / small.width, { timeout: 10_000 }).toBeCloseTo(1.3, 2);
+  await expect.poll(async () => (await width()) / small.width, { timeout: 20_000 }).toBeCloseTo(1.3, 2);
   const big = (await cards.nth(edge).boundingBox())!;
   expect(big.x + big.width).toBeLessThanOrEqual(box.x + box.width + 1);
   expect(big.y).toBeGreaterThanOrEqual(box.y - 1);

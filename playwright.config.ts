@@ -26,7 +26,9 @@ export default defineConfig({
   ],
   // Tests run against the production build, not the dev server. CI has already built it.
   webServer: {
-    command: `${process.env.CI ? '' : 'npm run build && '}npm run preview -- --host 127.0.0.1 --port ${PORT}`,
+    // --ignore-lock keeps the server in the foreground, which Playwright needs: Astro 7 otherwise
+    // starts it in the background when it thinks a coding agent is running it
+    command: `${process.env.CI ? '' : 'npm run build && '}npm run preview -- --host 127.0.0.1 --port ${PORT} --ignore-lock`,
     // Locally, build the résumé from the saved export so runs don't depend on Google
     env: process.env.CI ? {} : { RESUME_HTML: 'tests/fixtures/resume-export.html' },
     url: `http://127.0.0.1:${PORT}`,
