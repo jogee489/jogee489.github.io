@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { REPOS_API, screenshotUrl, shown, type Repo } from '../data/repos';
 
-type Repo = { name: string; full_name: string; html_url: string; fork: boolean; default_branch: string };
 type Card = { name: string; url: string; img: string };
-
-const EXCLUDED = new Set([
-  'jogee489.github.io',
-]);
 
 const SPEED = 0.032;  // px per ms the strip drifts on its own
 const IDLE = 3000;    // ms after a manual scroll before the drift picks up again
@@ -31,17 +27,11 @@ export default function RepoMarquee() {
     if (fetched.current) return;
     fetched.current = true;
 
-    fetch('https://api.github.com/users/jogee489/repos?per_page=100&sort=updated')
+    fetch(REPOS_API)
       .then(r => r.json())
       .then((data: Repo[]) => {
         if (!Array.isArray(data)) return;
-        const list = data
-          .filter(r => !r.fork && !EXCLUDED.has(r.name))
-          .map(r => ({
-            name: r.name,
-            url: r.html_url,
-            img: `https://raw.githubusercontent.com/${r.full_name}/${r.default_branch}/.github/screenshot.png`,
-          }));
+        const list = shown(data).map(r => ({ name: r.name, url: r.html_url, img: screenshotUrl(r) }));
         setCards(list);
         // The shell lists these under ~/repos
         window.dispatchEvent(new CustomEvent('repos:loaded', { detail: list }));

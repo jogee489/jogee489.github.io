@@ -11,7 +11,7 @@
 
 ## Repo strip
 - [ ] Play a demo video in the enlarged card on hover — convention would be `.github/demo.mp4` alongside `.github/screenshot.png` in each repo
-- [ ] Add screenshot to repos that are missing one (place at `.github/screenshot.png`)
+- [ ] Add a screenshot to the repos that are missing one (at `.github/screenshot.png`); each deploy run's summary lists them
 - [ ] Add GitHub token as env var / GitHub Actions secret to raise API rate limit from 60 to 5000 req/hr
 
 ## Work

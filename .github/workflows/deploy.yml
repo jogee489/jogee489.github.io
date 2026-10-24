@@ -86,6 +86,12 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+      # Written to the run summary; never fails the deploy
+      - name: List repos without a screenshot
+        continue-on-error: true
+        run: node scripts/repo-screenshots.ts
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

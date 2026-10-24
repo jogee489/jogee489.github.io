@@ -97,3 +97,4 @@ public/
 
 - **Daily runs** first check whether the résumé doc changed, and only rebuild if it did. They also re-enable the workflow through GitHub's API, because GitHub switches off scheduled workflows in a public repo after 60 days without activity.
 - **Résumé check** is the last job. It fails, and GitHub emails you, when the résumé couldn't be refreshed; the site still deploys with the copy it had.
+- **The run summary** lists the repos in the strip that have no `.github/screenshot.png`.
