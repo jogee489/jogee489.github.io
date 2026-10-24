@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import { COMMANDS, HELP, createShell, dir, file, projectsDir, type Actions, type FsNode } from './shell-core';
 
+// The four projects in Work. Sensei Connect's repo is private, so it links to its demo video.
 const PROJECTS = [
-  { id: 'leap', name: 'LEAP', stack: 'Rails, JRuby', blurb: 'Rails scraper.', url: 'https://github.com/jogee489/leap' },
-  { id: 'lunchroulette', name: 'Lunch Roulette', stack: 'Kotlin', blurb: 'Picks lunch.', url: 'https://github.com/jogee489/LunchRoulette' },
-  { id: 'laserdefender', name: 'Laser Defender', stack: 'Unity, C#', blurb: 'A shooter.', url: 'https://github.com/jogee489/LaserDefender' },
+  { id: 'sensei-connect', name: 'Sensei Connect', stack: 'Next.js, Supabase', blurb: 'Teacher marketplace.', url: 'https://www.youtube.com/watch?v=ZxlBJATvUNM' },
+  { id: 'heartopia-hub', name: 'Heartopia Hub', stack: 'React, Capacitor', blurb: 'Companion app.', url: 'https://github.com/jogee489/heartopia-hub' },
+  { id: 'weather-pet', name: 'Weather Pet', stack: 'Flutter', blurb: 'Weather app.', url: 'https://github.com/jogee489/weather-pet' },
+  { id: 'marvel-rivals-randomizer', name: 'Marvel Rivals Randomizer', stack: 'Vue', blurb: 'Team picker.', url: 'https://jjdorko.com/marvel-rivals-randomizer/' },
 ];
 const RESUME_URL = 'https://docs.example/resume';
 const ERROR = /No such file|Is a directory|not a directory|command not found|missing file/;
@@ -69,7 +71,7 @@ describe('filesystem', () => {
     visit('');
     // make sure the walk really went into every directory
     expect(visited).toEqual(expect.arrayContaining([
-      'about/about.txt', 'experience/vocera.txt', 'work/leap', 'repos/rails-chat', 'contact/linkedin', 'resume.txt',
+      'about/about.txt', 'experience/vocera.txt', 'work/sensei-connect', 'repos/rails-chat', 'contact/linkedin', 'resume.txt',
     ]));
   });
 
@@ -91,16 +93,17 @@ describe('filesystem', () => {
   it('shows each project with its stack', () => {
     const { run } = setup();
     expect(run('ls work')).toEqual([
-      'leap            Rails, JRuby',
-      'lunchroulette   Kotlin',
-      'laserdefender   Unity, C#',
+      'sensei-connect             Next.js, Supabase',
+      'heartopia-hub              React, Capacitor',
+      'weather-pet                Flutter',
+      'marvel-rivals-randomizer   Vue',
     ]);
   });
 
   it('keeps projects as another name for work', () => {
     const { run } = setup();
     expect(run('ls projects')).toEqual(run('ls work'));
-    expect(run('cat projects/leap')[0]).toBe('LEAP');
+    expect(run('cat projects/weather-pet')[0]).toBe('Weather Pet');
   });
 
   it('prints a file name when ls is given a file', () => {
@@ -166,8 +169,10 @@ describe('cat', () => {
   it('prints a project by name from anywhere', () => {
     const { run } = setup();
     run('cd about');
-    expect(run('cat leap')).toEqual(['LEAP', 'Rails, JRuby', '', 'Rails scraper.', '', 'github.com/jogee489/leap']);
-    expect(run('cat lunch roulette')[0]).toBe('Lunch Roulette');
+    expect(run('cat heartopia-hub')).toEqual(['Heartopia Hub', 'React, Capacitor', '', 'Companion app.', '', 'github.com/jogee489/heartopia-hub']);
+    expect(run('cat weather pet')[0]).toBe('Weather Pet');
+    // a private repo shows where its demo is instead
+    expect(run('cat sensei-connect').at(-1)).toBe('www.youtube.com/watch?v=ZxlBJATvUNM');
   });
 
   it('explains directories, missing files and a missing name', () => {
@@ -216,9 +221,15 @@ describe('cd', () => {
 describe('open', () => {
   it('opens projects by name or path', () => {
     const { run, actions } = setup();
-    expect(run('open leap')).toEqual(['Opening github.com/jogee489/leap']);
-    run('open work/laserdefender');
-    expect(actions.open.mock.calls).toEqual([['https://github.com/jogee489/leap'], ['https://github.com/jogee489/LaserDefender']]);
+    expect(run('open heartopia-hub')).toEqual(['Opening github.com/jogee489/heartopia-hub']);
+    run('open work/marvel-rivals-randomizer');
+    expect(actions.open.mock.calls).toEqual([['https://github.com/jogee489/heartopia-hub'], ['https://jjdorko.com/marvel-rivals-randomizer/']]);
+  });
+
+  it('opens the demo video for a project with a private repo', () => {
+    const { run, actions } = setup();
+    expect(run('open sensei-connect')).toEqual(['Opening www.youtube.com/watch?v=ZxlBJATvUNM']);
+    expect(actions.open).toHaveBeenCalledWith('https://www.youtube.com/watch?v=ZxlBJATvUNM');
   });
 
   it('opens the résumé and profile links', () => {
@@ -233,7 +244,7 @@ describe('open', () => {
     expect(run('open about/about.txt')).toEqual(['open: about/about.txt: has no link to open']);
     expect(run('open work')).toEqual(['open: work: Is a directory']);
     expect(run('open nope')).toEqual(['open: nope: No such file or directory']);
-    expect(run('open')).toEqual(["open: missing file name. Try 'open leap'."]);
+    expect(run('open')).toEqual(["open: missing file name. Try 'open sensei-connect'."]);
     expect(actions.open).not.toHaveBeenCalled();
   });
 });
@@ -369,7 +380,7 @@ describe('tab completion', () => {
 
   it('completes inside directories and from the working directory', () => {
     const { sh, run } = setup();
-    expect(sh.complete('cat work/le')).toBe('cat work/leap');
+    expect(sh.complete('cat work/we')).toBe('cat work/weather-pet');
     expect(sh.complete('cat experience/v')).toBe('cat experience/vocera.txt');
     run('cd experience');
     expect(sh.complete('cat i')).toBe('cat its.txt');
@@ -382,9 +393,8 @@ describe('tab completion', () => {
 
   it('offers project names to cat and open from anywhere', () => {
     const { sh, printed } = setup();
-    expect(sh.complete('open lea')).toBe('open leap');
-    expect(sh.complete('cat l')).toBe('cat l');
-    expect(printed()).toBe('leap  lunchroulette  laserdefender');
-    expect(sh.complete('cat la')).toBe('cat laserdefender');
+    expect(sh.complete('open sen')).toBe('open sensei-connect');
+    expect(sh.complete('cat m')).toBe('cat marvel-rivals-randomizer');
+    expect(sh.complete('open h')).toBe('open heartopia-hub');
   });
 });

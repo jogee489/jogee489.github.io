@@ -1,35 +1,58 @@
 ---
 import { getCollection } from 'astro:content';
+import { projectUrl, watchUrl } from '../data/projects';
+import Video from './Video.astro';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-// The first project with a screenshot gets the featured slot; the rest are a list
-const featured = projects.find(p => p.data.image);
+// The project marked featured is shown large; the rest are a list
+const marked = projects.filter(p => p.data.featured);
+if (marked.length > 1) throw new Error(`Only one project can be featured: ${marked.map(p => p.id).join(', ')}`);
+const featured = marked[0];
 const rest = projects.filter(p => p !== featured);
-const href = (repo: string) => `https://${repo}`;
+const f = featured?.data;
 ---
 
 <section id="work">
   <h2 class="sec-h">Work</h2>
-  {featured && (
-    <article class="feature">
-      <img src={featured.data.image} alt={`${featured.data.name} app screen`} width="1080" height="2400" loading="lazy" />
+  {f && (
+    <article class:list={['feature', { 'has-video': f.video, 'no-media': !f.video && !f.image }]}>
+      {f.video
+        ? <Video id={f.video} title={`${f.name} demo video`} poster={f.image} />
+        : f.image && <img src={f.image} alt={`${f.name} app screen`} width="1080" height="2400" loading="lazy" />}
       <div>
-        <h3>{featured.data.name}</h3>
-        <p class="meta">{featured.data.stack.join(', ')}</p>
-        <p class="desc">{featured.data.blurb}</p>
-        <a class="go" href={href(featured.data.repo)} target="_blank" rel="noreferrer">
-          Source <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg>
-        </a>
+        <h3>{f.name} {f.status && <span class="status">{f.status}</span>}</h3>
+        <p class="meta">{f.role} · {f.stack.join(', ')}</p>
+        <p class="desc">{f.blurb}</p>
+        <p class="links">
+          {f.video && (
+            <a class="go" href={watchUrl(f.video)} target="_blank" rel="noreferrer">
+              Watch demo <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg>
+            </a>
+          )}
+          {f.repoPublic && (
+            <a class="go" href={projectUrl(f)} target="_blank" rel="noreferrer">
+              Source <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg>
+            </a>
+          )}
+          {f.caseStudy && (
+            <a class="go" href={f.caseStudy} target="_blank" rel="noreferrer">
+              Case study <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg>
+            </a>
+          )}
+        </p>
       </div>
     </article>
   )}
   <ul class="projects">
-    {rest.map(p => (
+    {rest.map(({ data: p }) => (
       <li>
-        <a href={href(p.data.repo)} target="_blank" rel="noreferrer">
-          <span class="n">{p.data.name} <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg></span>
-          <span class="s">{p.data.stack.join(', ')}</span>
-          <p class="b">{p.data.blurb}</p>
+        <a href={projectUrl(p)} target="_blank" rel="noreferrer">
+          <span class="n">
+            {p.name} <svg class="ico" aria-hidden="true"><use href="#i-arrow" /></svg>
+            {p.status && <span class="status">{p.status}</span>}
+          </span>
+          <span class="s">{p.role} · {p.stack.join(', ')}</span>
+          <p class="b">{p.blurb}</p>
         </a>
       </li>
     ))}

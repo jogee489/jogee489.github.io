@@ -175,7 +175,7 @@ export function createShell(cfg: ShellConfig) {
   }
 
   function open(arg: string) {
-    if (!arg) return out("open: missing file name. Try 'open leap'.");
+    if (!arg) return out("open: missing file name. Try 'open sensei-connect'.");
     const { node } = resolve(arg);
     if (node?.kind === 'dir') return out(`open: ${arg}: Is a directory`);
     const url = node ? node.url : findProject(arg)?.url;

@@ -40,8 +40,11 @@ npm run test:e2e   # Playwright against a production build: console, keyboard, s
 src/
 ├── components/          # Astro + React components (one per page section)
 ├── content/
-│   └── projects/        # One .md file per featured project
+│   └── projects/        # One .md file per project in Work
+├── content.config.ts    # Fields each project file must have
 ├── data/
+│   ├── links.ts         # LinkedIn, GitHub and résumé links used across the site
+│   ├── projects.ts      # Where each project links to
 │   └── skills.ts        # Output of the shell's `skills` command
 ├── pages/
 │   └── index.astro      # Homepage (single page)
@@ -60,17 +63,22 @@ public/
 
 ## Adding a project
 
-1. Create `src/content/projects/<slug>.md` with the required frontmatter:
+1. Create `src/content/projects/<slug>.md`. The fields are checked against the schema in `src/content.config.ts` when the site builds:
    ```yaml
-   order: 7
+   order: 5
    name: "Project Name"
    role: "Your role"
    stack: ["Tech", "Stack"]
-   blurb: "One-sentence description."
-   repo: "github.com/jogee489/repo-name"
-   image: "/images/screenshot.png"   # optional
+   blurb: "One or two sentences."
+   repo: "github.com/jogee489/repo-name"   # needed unless repoPublic is false
+   repoPublic: true                        # optional, default true; false links to the video or case study instead
+   image: "/images/screenshot.png"         # optional; for a project with a video, the poster shown before play
+   video: "ZxlBJATvUNM"                    # optional YouTube ID, played in Work only after a click
+   status: "In development"                # optional label next to the name
+   caseStudy: "https://..."                # optional
+   featured: true                          # optional; the one project shown large at the top of Work
    ```
-2. That's it. The project shows up in Work and in the shell (`ls projects`, `cat <slug>`, `open <slug>`). The first project with an `image` is the featured one.
+2. That's it. The project shows up in Work and in the shell (`ls projects`, `cat <slug>`, `open <slug>`).
 
 ## Deployment
 

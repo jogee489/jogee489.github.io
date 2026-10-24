@@ -6,6 +6,7 @@
 - [ ] Add a phone-size, touch-enabled run (390×844) to the Playwright suite
 
 ## Desk scene
+- [ ] Play a project's demo video on the phone on the desk instead of a still screenshot
 - [ ] Model the desk in Blender with baked lighting to replace the primitive shapes in `src/scripts/desk.ts` (better look, cheaper to render)
 
 ## Repo strip
@@ -14,7 +15,8 @@
 - [ ] Add GitHub token as env var / GitHub Actions secret to raise API rate limit from 60 to 5000 req/hr
 
 ## Work
-- [ ] Screenshots for Leap, Weather Pet, Lunch Roulette, Laser Defender and Marvel Rivals Randomizer, and decide how Work shows more than one (today only the first project with an `image` is featured)
+- [ ] Poster image for the Sensei Connect video once the redesign is done (today it shows a plain placeholder)
+- [ ] Screenshots for Weather Pet and Marvel Rivals Randomizer
 
 ## Experience
 - [ ] Add anything since 2021 (freelance work, teaching)

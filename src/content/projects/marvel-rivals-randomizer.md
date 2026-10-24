@@ -1,5 +1,5 @@
 ---
-order: 6
+order: 4
 name: "Marvel Rivals Randomizer"
 role: "Main contributor"
 stack: ["Vue", "Vite", "JavaScript"]

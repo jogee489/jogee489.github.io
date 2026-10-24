@@ -1,5 +1,5 @@
 ---
-order: 1
+order: 2
 name: "Heartopia Hub"
 role: "Solo build"
 stack: ["React", "TypeScript", "Capacitor", "Android"]

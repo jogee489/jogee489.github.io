@@ -1,0 +1,47 @@
+---
+// A YouTube video that loads only when someone presses play. Until then it's a poster that
+// links to the video on YouTube, so nothing from YouTube loads with the page and the link
+// still works without JavaScript.
+import { watchUrl } from '../data/projects';
+
+interface Props {
+  id: string;
+  title: string;
+  poster?: string;
+}
+const { id, title, poster } = Astro.props;
+---
+
+<figure class="video">
+  <a class="video-start" href={watchUrl(id)} target="_blank" rel="noreferrer" data-yt={id} data-title={title}
+    aria-label={`Play ${title}`}>
+    {poster && <img src={poster} alt="" loading="lazy" />}
+    <span class="video-play" aria-hidden="true"><svg class="ico"><use href="#i-play" /></svg></span>
+    <span class="video-cap" aria-hidden="true">Play the demo <span>· loads from YouTube when played</span></span>
+  </a>
+</figure>
+
+<script>
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-yt]')) {
+    const play = (e: Event) => {
+      e.preventDefault();
+      const frame = document.createElement('iframe');
+      frame.src = `https://www.youtube-nocookie.com/embed/${link.dataset.yt}?autoplay=1&rel=0&playsinline=1`;
+      frame.title = link.dataset.title!;
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      // YouTube refuses to play embeds that send no referrer
+      frame.referrerPolicy = 'strict-origin-when-cross-origin';
+      link.replaceWith(frame);
+      frame.focus();
+    };
+    // With JavaScript it plays in place, so it acts as a button
+    link.setAttribute('role', 'button');
+    link.addEventListener('click', e => {
+      // a middle or modified click still opens YouTube in a new tab
+      if (e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+      play(e);
+    });
+    link.addEventListener('keydown', e => { if (e.key === ' ') play(e); });
+  }
+</script>

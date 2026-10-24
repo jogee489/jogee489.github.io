@@ -118,11 +118,11 @@ test('typing on the desk goes to the monitor, and the console shares its history
 
 test('open and resume launch the right links', async ({ page }) => {
   await openConsole(page);
-  await run(page, 'open leap');
+  await run(page, 'open sensei-connect');
   await run(page, 'open contact/linkedin');
   await run(page, 'resume');
   expect(await page.evaluate(() => (window as typeof window & { opened: string[] }).opened)).toEqual([
-    'https://github.com/jogee489/leap',
+    'https://www.youtube.com/watch?v=ZxlBJATvUNM',
     'https://www.linkedin.com/in/jjdorko',
     'https://docs.google.com/document/d/1FB6sleJ1ML4Hoe_g6wiSWh8CZVqXwje7lVZqr0MkE-M/edit?usp=sharing',
   ]);
