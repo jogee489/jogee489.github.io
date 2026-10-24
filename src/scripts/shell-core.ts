@@ -1,5 +1,6 @@
 // Command engine for the site's shell. It never touches the DOM: the page hands it a
 // filesystem and a set of actions, which keeps every command unit-testable.
+import { GITHUB_URL, LINKEDIN_URL, bare } from '../data/links';
 
 export type Line = { t: 'in' | 'out' | 'sys'; s: string; cwd?: string };
 export type FileNode = { kind: 'file'; read: () => string[]; url?: string; note?: string };
@@ -224,7 +225,7 @@ export function createShell(cfg: ShellConfig) {
         cfg.skills.forEach(g => out(`${g.label.toLowerCase().padEnd(15)}${g.items.join(', ')}`));
         break;
       case 'contact':
-        out('linkedin  linkedin.com/in/jjdorko', 'github    github.com/jogee489', "form      'cd contact'");
+        out(`linkedin  ${bare(LINKEDIN_URL)}`, `github    ${bare(GITHUB_URL)}`, "form      'cd contact'");
         break;
       case 'lamp': {
         const on = cfg.actions.lamp();

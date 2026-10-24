@@ -1,5 +1,6 @@
 ---
 import { SITE_TITLE } from '../consts';
+import { GITHUB_URL, LINKEDIN_URL } from '../data/links';
 import HeaderLink from './HeaderLink.astro';
 ---
 
@@ -12,7 +13,7 @@ import HeaderLink from './HeaderLink.astro';
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
 		<div class="social-links">
-			<a href="https://github.com/jogee489" target="_blank">
+			<a href={GITHUB_URL} target="_blank">
 				<span class="sr-only">JJ Dorko on GitHub</span>
 				<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
 					><path
@@ -21,7 +22,7 @@ import HeaderLink from './HeaderLink.astro';
 					></path></svg
 				>
 			</a>
-			<a href="https://www.linkedin.com/in/joseph-dorko-234721a9/" target="_blank">
+			<a href={LINKEDIN_URL} target="_blank">
 				<span class="sr-only">JJ Dorko on LinkedIn</span>
 				<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
 					><path

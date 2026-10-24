@@ -1,5 +1,6 @@
 // Wires the shell engine to the page: the filesystem is read from the page's own content,
 // and the same shell drives the monitor in the desk scene and the full-screen console.
+import { GITHUB_URL, LINKEDIN_URL, RESUME_URL, bare } from '../data/links';
 import { SKILL_GROUPS } from '../data/skills';
 import { createShell, dir, file, projectsDir, type FsNode, type Project } from './shell-core';
 
@@ -10,7 +11,6 @@ type DeskApi = {
   toggleLamp(): boolean;
 };
 
-const RESUME_URL = 'https://docs.google.com/document/d/1lEfCjaSvtYKnsLCRMSEz7S896fTxNUJinJZli5wpCro/view';
 const SECTIONS = ['about', 'experience', 'work', 'repos', 'contact'];
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const coarse = matchMedia('(pointer: coarse)').matches;
@@ -23,7 +23,7 @@ const RESUME = [
   '│  joseph (jj) dorko — resume.txt                     │',
   '└─────────────────────────────────────────────────────┘',
   '',
-  '  github.com/jogee489 · linkedin.com/in/jjdorko',
+  `  ${bare(GITHUB_URL)} · ${bare(LINKEDIN_URL)}`,
   '',
   '── GOAL ──────────────────────────────────────────────',
   '',
@@ -122,8 +122,8 @@ const root = dir({
   work: projectsDir(PROJECTS),
   repos: dir(() => repos, { empty: 'Nothing here yet. The list loads from GitHub, so try again in a moment.' }),
   contact: dir({
-    linkedin: file(() => ['linkedin.com/in/jjdorko'], { url: 'https://linkedin.com/in/jjdorko' }),
-    github: file(() => ['github.com/jogee489'], { url: 'https://github.com/jogee489' }),
+    linkedin: file(() => [bare(LINKEDIN_URL)], { url: LINKEDIN_URL }),
+    github: file(() => [bare(GITHUB_URL)], { url: GITHUB_URL }),
     'form.txt': file(() => ['The contact form is at the bottom of the page.', "Run 'cd contact' to go there."]),
   }),
   'resume.txt': file(() => RESUME, { url: RESUME_URL }),

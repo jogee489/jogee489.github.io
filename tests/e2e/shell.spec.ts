@@ -123,8 +123,8 @@ test('open and resume launch the right links', async ({ page }) => {
   await run(page, 'resume');
   expect(await page.evaluate(() => (window as typeof window & { opened: string[] }).opened)).toEqual([
     'https://github.com/jogee489/leap',
-    'https://linkedin.com/in/jjdorko',
-    'https://docs.google.com/document/d/1lEfCjaSvtYKnsLCRMSEz7S896fTxNUJinJZli5wpCro/view',
+    'https://www.linkedin.com/in/jjdorko',
+    'https://docs.google.com/document/d/1FB6sleJ1ML4Hoe_g6wiSWh8CZVqXwje7lVZqr0MkE-M/edit?usp=sharing',
   ]);
 });
 

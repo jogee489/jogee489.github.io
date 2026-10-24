@@ -24,7 +24,7 @@ function setup({ repos = { 'rails-chat': file(() => ['rails-chat'], { url: 'http
     work: projectsDir(PROJECTS),
     repos: dir(() => repos, { empty: 'Nothing here yet.' }),
     contact: dir({
-      linkedin: file(() => ['linkedin.com/in/jjdorko'], { url: 'https://linkedin.com/in/jjdorko' }),
+      linkedin: file(() => ['linkedin.com/in/jjdorko'], { url: 'https://www.linkedin.com/in/jjdorko' }),
       'form.txt': file(() => ['The form is below.']),
     }),
     'resume.txt': file(() => ['RESUME TEXT'], { url: RESUME_URL }),
@@ -225,7 +225,7 @@ describe('open', () => {
     const { run, actions } = setup();
     run('open resume.txt');
     run('open contact/linkedin');
-    expect(actions.open.mock.calls).toEqual([[RESUME_URL], ['https://linkedin.com/in/jjdorko']]);
+    expect(actions.open.mock.calls).toEqual([[RESUME_URL], ['https://www.linkedin.com/in/jjdorko']]);
   });
 
   it('explains what it cannot open', () => {
@@ -261,7 +261,11 @@ describe('other commands', () => {
   });
 
   it('lists where to reach me', () => {
-    expect(setup().run('contact')).toEqual(['linkedin  linkedin.com/in/jjdorko', 'github    github.com/jogee489', "form      'cd contact'"]);
+    expect(setup().run('contact')).toEqual([
+      'linkedin  linkedin.com/in/jjdorko',
+      'github    github.com/jogee489',
+      "form      'cd contact'",
+    ]);
   });
 
   it('numbers past commands in history, including itself', () => {

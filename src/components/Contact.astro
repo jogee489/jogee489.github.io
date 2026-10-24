@@ -1,4 +1,5 @@
 ---
+import { LINKEDIN_URL } from '../data/links';
 import ContactForm from './ContactForm';
 ---
 
@@ -6,7 +7,7 @@ import ContactForm from './ContactForm';
   <h2>Need a backend engineer?</h2>
   <p>
     I'm taking freelance work: Rails and Java services, APIs, and Linux servers that have to stay up. Send a
-    note here or find me on <a href="https://linkedin.com/in/jjdorko" target="_blank" rel="noreferrer">LinkedIn</a>.
+    note here or find me on <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">LinkedIn</a>.
   </p>
   <ContactForm client:load />
 </section>
