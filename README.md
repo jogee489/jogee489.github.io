@@ -34,7 +34,7 @@ npm run test:e2e   # Playwright against a production build: console, keyboard, s
 - **Unit tests** cover every shell command, path handling and tab completion (`src/scripts/shell-core.test.ts`), how the résumé is read, formatted and checked for phone numbers (`src/scripts/resume-format.test.ts`), and project links (`src/data/projects.test.ts`).
 - **Script tests** (`scripts/*.test.ts`) run `scripts/resume.ts` for real in a temporary folder, with a local server standing in for jjdorko.com: a clean doc, a doc it must refuse, no copy to fall back to, a changed page setup, offline builds and the daily change check.
 - **End-to-end tests** (`tests/e2e/`) cover the wiring the unit tests can't see. GitHub, YouTube and Google Fonts are stubbed and the résumé comes from `tests/fixtures/resume-export.html`, so they run offline.
-- The script and end-to-end tests need Playwright's Chromium: on a new machine, run `npx playwright install chromium` once.
+- The script and end-to-end tests need Playwright's Chromium: on a new machine, run `npx playwright install chromium` once, or set `PLAYWRIGHT_CHROMIUM_PATH` to a Chromium that's already installed.
 
 ## Project structure
 

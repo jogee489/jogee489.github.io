@@ -20,7 +20,11 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width: 1440, height: 900 },
         // software WebGL, so the desk renders on machines without a GPU (CI included)
-        launchOptions: { args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
+        launchOptions: {
+          args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+          // a Chromium already on the machine, instead of the one `npx playwright install` downloads
+          executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined,
+        },
       },
     },
   ],

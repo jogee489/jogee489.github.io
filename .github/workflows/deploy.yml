@@ -23,6 +23,7 @@ jobs:
   check:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
       actions: write
@@ -30,9 +31,9 @@ jobs:
       changed: ${{ steps.resume.outputs.changed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 26
       - name: Has the résumé changed?
@@ -50,14 +51,16 @@ jobs:
     # After a push or "Run workflow", always; on the schedule, only when the résumé changed
     if: ${{ !cancelled() && (github.event_name != 'schedule' || needs.check.outputs.changed != 'false') }}
     runs-on: ubuntu-latest
+    # A normal build takes about 5 minutes; a hang should fail fast and email, not run for 6 hours
+    timeout-minutes: 30
     outputs:
       resume_problem: ${{ steps.build.outputs.problem }}
       resume_notice: ${{ steps.build.outputs.notice }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 26
           cache: npm
@@ -66,11 +69,12 @@ jobs:
       # The résumé script's tests, the build (which prints the résumé PDF) and the end-to-end
       # tests all use it
       - name: Install Playwright browser
+        timeout-minutes: 10
         run: npx playwright install --with-deps chromium
       - name: Unit tests
         run: npm test
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
       - name: Build with Astro
         id: build
         run: npm run build
@@ -79,7 +83,7 @@ jobs:
         run: npm run test:e2e
       - name: Upload test report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: |
@@ -93,7 +97,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
@@ -105,10 +109,11 @@ jobs:
     # Without this, a skipped check job (every push) would skip the deploy too
     if: ${{ !cancelled() && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   # The site still went out. This turns the run red with the reason, so GitHub emails you: either
   # the résumé couldn't be refreshed and the old copy was kept, or it was, with something to fix.

@@ -61,7 +61,8 @@ class Problem extends Error {}
 /** prints the export to PDF and reads its text; throws a Problem if it shouldn't be published */
 async function fromDoc(html: string): Promise<Omit<Built, 'problem'>> {
   const { chromium } = await import('@playwright/test');
-  const browser = await chromium.launch();
+  // PLAYWRIGHT_CHROMIUM_PATH: a Chromium already on the machine, as in playwright.config.ts
+  const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined });
   try {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle' });
