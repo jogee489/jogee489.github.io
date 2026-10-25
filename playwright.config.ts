@@ -7,6 +7,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
+  // Without a GPU (CI, containers) Chromium draws the 3D desk in software, and on recent versions
+  // each frame of its zoom and key animations takes seconds, so give assertions longer than 5s
+  expect: { timeout: 15_000 },
   // In CI, annotate failures on the run and keep an HTML report to download
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
